@@ -1,7 +1,5 @@
 package com.release.core.post;
 
-import com.release.core.user.User;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

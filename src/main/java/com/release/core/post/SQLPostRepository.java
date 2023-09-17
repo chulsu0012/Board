@@ -1,8 +1,5 @@
 package com.release.core.post;
 
-import com.release.core.user.User;
-import lombok.Getter;
-
 import java.util.ArrayList;
 
 public class SQLPostRepository implements PostRepository {
