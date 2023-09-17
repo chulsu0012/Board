@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto increment
     private int userId;
 
     private int userIsAdmin;
@@ -18,7 +18,7 @@ public class User {
     private String userEmail;
     private String userPassword;
 
-    @Column(name = "user_register_date")
+//    @Column(name = "userRegisterDate")
     private LocalDateTime userRegisterDate;
 
     // getters and setters
