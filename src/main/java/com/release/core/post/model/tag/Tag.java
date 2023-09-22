@@ -1,6 +1,4 @@
-package com.release.core.post.tag;
-
-import com.release.core.post.tag.Category;
+package com.release.core.post.model.tag;
 
 public class Tag {
 

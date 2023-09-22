@@ -1,6 +1,6 @@
-package com.release.core.post;
+package com.release.core.post.model;
 
-import com.release.core.post.tag.Tag;
+import com.release.core.post.model.tag.Tag;
 import com.release.core.user.model.User;
 import lombok.Getter;
 import lombok.Setter;

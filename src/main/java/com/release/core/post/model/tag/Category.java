@@ -1,4 +1,4 @@
-package com.release.core.post.tag;
+package com.release.core.post.model.tag;
 
 import lombok.Getter;
 

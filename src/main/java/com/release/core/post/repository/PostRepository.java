@@ -1,4 +1,6 @@
-package com.release.core.post;
+package com.release.core.post.repository;
+
+import com.release.core.post.model.Post;
 
 import java.util.ArrayList;
 
