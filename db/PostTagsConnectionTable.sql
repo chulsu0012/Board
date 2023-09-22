@@ -4,5 +4,5 @@ create table PostTagsConnectionTable (
     tagId int not null,
     primary key(connectionId),
     foreign key (postId) references PostTable(postId),
-    foreign key (tagId) references TagTable(tagId),
+    foreign key (tagId) references TagTable(tagId)
 );
