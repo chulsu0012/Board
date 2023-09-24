@@ -1,5 +1,6 @@
-package com.release.core.bookmark;
+package com.release.core.repository;
 
+import com.release.core.model.Bookmark;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 

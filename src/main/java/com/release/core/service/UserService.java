@@ -1,6 +1,6 @@
-package com.release.core.user.service;
+package com.release.core.service;
 
-import com.release.core.user.model.User;
+import com.release.core.model.User;
 
 import java.util.List;
 

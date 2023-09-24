@@ -1,4 +1,4 @@
-package com.release.core.post.model.tag;
+package com.release.core.model;
 
 public class Tag {
 

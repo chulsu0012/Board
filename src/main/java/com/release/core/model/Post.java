@@ -1,37 +1,31 @@
-package com.release.core.post.model;
+package com.release.core.model;
 
-import com.release.core.post.model.tag.Tag;
-import com.release.core.user.model.User;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 
+@Getter
+@ToString
 public class Post {
 
-    @Getter
     private final int postId;
 
-    @Getter
     @Setter
     private String postTitle;
 
-    @Getter
     @Setter
     private String postDate;
 
-    @Getter
     @Setter
     private String postContent;
 
-    @Getter
     @Setter
     private int postTripDays;
 
-    @Getter
     private final User writer;
 
-    @Getter
     private ArrayList<Tag> tags;
 
     public Post(int postId, User writer) {

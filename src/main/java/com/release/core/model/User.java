@@ -1,4 +1,4 @@
-package com.release.core.user.model;
+package com.release.core.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

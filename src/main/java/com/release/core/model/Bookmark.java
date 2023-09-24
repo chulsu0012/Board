@@ -1,4 +1,4 @@
-package com.release.core.bookmark;
+package com.release.core.model;
 
 public class Bookmark {
     private int bookmarkId;

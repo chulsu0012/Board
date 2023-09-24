@@ -1,6 +1,6 @@
-package com.release.core.user.repository;
+package com.release.core.repository;
 
-import com.release.core.user.model.User;
+import com.release.core.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
