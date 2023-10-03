@@ -1,7 +1,7 @@
 create table PostTagsConnectionTable (
-    connectionId int not null auto_increment,
-    postId int not null,
-    tagId int not null,
+    connectionId bigint not null auto_increment,
+    postId bigint not null,
+    tagId bigint not null,
     primary key(connectionId),
     foreign key (postId) references PostTable(postId),
     foreign key (tagId) references TagTable(tagId)
