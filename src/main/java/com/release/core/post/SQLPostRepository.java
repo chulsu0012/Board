@@ -1,5 +1,7 @@
 package com.release.core.post;
 
+import com.release.core.user.model.User;
+
 import java.util.ArrayList;
 
 public class SQLPostRepository implements PostRepository {

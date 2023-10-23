@@ -1,5 +1,6 @@
 package com.release.core.post;
 
+import com.release.core.user.model.User;
 import lombok.Getter;
 import lombok.Setter;
 

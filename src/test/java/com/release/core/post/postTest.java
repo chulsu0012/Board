@@ -1,5 +1,6 @@
 package com.release.core.post;
 
+import com.release.core.user.model.User;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
