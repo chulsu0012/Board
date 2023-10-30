@@ -1,18 +1,18 @@
 package com.release.core.repository;
 
-import com.release.core.model.Post;
-import com.release.core.model.User;
+import com.release.core.domain.Post;
+import com.release.core.domain.User;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository {
 
-    void save();
-    void load();
+    Post save(Post post);
 
-    void write(Post post);
+    Optional<Post> findById(Long postId);
 
-    ArrayList<Post> findByWriter(User writer);
+    List<Post> findByWriterUserId(Long writerUserId);
 
-    ArrayList<Post> searchPosts(int num);
+    //List<Post> searchPosts(int num);
 }

@@ -1,4 +1,4 @@
-package com.release.core.model;
+package com.release.core.domain;
 
 public class Bookmark {
     private int bookmarkId;

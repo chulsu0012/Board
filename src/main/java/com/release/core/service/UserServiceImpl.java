@@ -1,6 +1,6 @@
 package com.release.core.service;
 
-import com.release.core.model.User;
+import com.release.core.domain.User;
 import com.release.core.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

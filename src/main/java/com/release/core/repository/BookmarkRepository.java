@@ -1,6 +1,6 @@
 package com.release.core.repository;
 
-import com.release.core.model.Bookmark;
+import com.release.core.domain.Bookmark;
 
 public interface BookmarkRepository {
     
