@@ -40,10 +40,19 @@ public class UserServiceIntegrationTest {
 //Given
         User user1 = new User();
         user1.setName("spring");
+        user1.setUserEmail("hello@naver.com");
+        user1.setUserPassword("hellohello");
+        user1.setUserIsAdmin(0L);
+        user1.setUserRegisterDate("20231101");
         User user2 = new User();
         user2.setName("spring");
+        user2.setUserEmail("hello2@naver.com");
+        user2.setUserPassword("hello2hello2");
+        user2.setUserIsAdmin(0L);
+        user2.setUserRegisterDate("202311012");
 //When
         userService.join(user1);
+        // userService.join(user2);
         IllegalStateException e = assertThrows(IllegalStateException.class,
                 () -> userService.join(user2));//예외가 발생해야 한다.
         assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
