@@ -1,7 +1,7 @@
 package com.release.core;
 
-import com.release.core.repository.JPAPostRepository;
-import com.release.core.repository.PostRepository;
+import com.release.core.repository.*;
+import com.release.core.service.UserService;
 import jakarta.persistence.EntityManager;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -22,6 +22,15 @@ public class AppConfig{
         this.em = em;
     }
 
+    @Bean
+    public UserService userService() {
+        return new UserService(userRepository());
+    }
+    @Bean
+    public UserRepository userRepository() {
+        //return new MemoryUserRepository();
+        return new JdbcTemplateUserRepository(dataSource);
+    }
 
     @Bean
     public PostRepository postRepository() {

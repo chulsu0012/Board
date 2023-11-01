@@ -10,18 +10,21 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @Table(name = "UserTable")
 public class User {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userId")
     private Long userId;
 
-    @Column(nullable = false, length = 20, unique = true)
+    @Column(name = "userName", length = 20, unique = true)
     private String userName;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "userEmail", nullable = true, length = 20)
     private String userEmail;
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "userPassword", length = 20)
     private String userPassword;
 
+    @Column(name="userRegisterDate")
     private String userRegisterDate;
 
 

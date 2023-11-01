@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+
 public class UserServiceImpl {
 
-    @Autowired
+
     private UserRepository userRepository;
 
     User createUser(User user) {
