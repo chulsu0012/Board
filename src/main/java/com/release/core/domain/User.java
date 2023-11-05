@@ -8,27 +8,27 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
-@Table(name = "UserTable")
+@Table(name = "USERTABLE")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId")
+    @Column(name = "USERID")
     private Long userId;
 
-    @Column(name = "userName", length = 20, unique = true)
+    @Column(name = "USERNAME", length = 20, unique = true)
     private String userName;
 
-    @Column(name = "userEmail", nullable = true, length = 20)
+    @Column(name = "USEREMAIL", nullable = true, length = 20)
     private String userEmail;
 
-    @Column(name = "userPassword", length = 20)
+    @Column(name = "USERPASSWORD", length = 20)
     private String userPassword;
 
-    @Column(name="userRegisterDate")
+    @Column(name="USERREGISTERDATE")
     private String userRegisterDate;
 
 
-    @Column(name = "UserIsAdmin")
+    @Column(name = "USERISADMIN")
     private Long UserIsAdmin;
 
     public Long getId() {
