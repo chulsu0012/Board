@@ -29,7 +29,8 @@ public class AppConfig{
     @Bean
     public UserRepository userRepository() {
         //return new MemoryUserRepository();
-        return new JdbcTemplateUserRepository(dataSource);
+        //return new JdbcTemplateUserRepository(dataSource);
+        return new JPAUserRepository(em);
     }
 
     @Bean

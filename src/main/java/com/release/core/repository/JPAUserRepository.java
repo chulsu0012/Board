@@ -28,7 +28,7 @@ public class JPAUserRepository implements UserRepository{
 
     @Override
     public Optional<User> findByName(String name) {
-        List<User> result = em.createQuery("select m from User m where m.name = :name", User.class)
+        List<User> result = em.createQuery("select m from User m where m.userName = :name", User.class)
                 .setParameter("name", name)
                 .getResultList();
         return result.stream().findAny();
