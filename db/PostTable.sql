@@ -1,4 +1,4 @@
-
+drop table if exists PostTable CASCADE;
 create table PostTable(
     postId bigint not null auto_increment,
     postTitle char(20) not null,

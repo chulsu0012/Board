@@ -1,4 +1,4 @@
-
+drop table if exists BookmarkTable CASCADE;
 create table BookmarkTable(
     bookmarkId bigint not null auto_increment,
     userId bigint not null,

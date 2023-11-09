@@ -1,4 +1,4 @@
-
+drop table if exists PostTagsConnectionTable CASCADE;
 create table PostTagsConnectionTable (
     connectionId bigint not null auto_increment,
     postId bigint not null,
