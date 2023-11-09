@@ -1,5 +1,8 @@
 package com.release.core;
 
+import com.release.core.bookmark.repository.BookmarkRepository;
+import com.release.core.bookmark.repository.JpaBookmarkRepository;
+import com.release.core.bookmark.service.BookmarkService;
 import com.release.core.repository.*;
 import com.release.core.service.UserService;
 import jakarta.persistence.EntityManager;
@@ -21,7 +24,7 @@ public class AppConfig{
         this.dataSource = dataSource;
         this.em = em;
     }
-
+    // User
     @Bean
     public UserService userService() {
         return new UserService(userRepository());
@@ -33,9 +36,21 @@ public class AppConfig{
         return new JPAUserRepository(em);
     }
 
+    // Post
     @Bean
     public PostRepository postRepository() {
         return new JPAPostRepository(em);
+    }
+
+    // Bookmark
+    @Bean
+    public BookmarkService bookmarkService() {
+      return new BookmarkService(bookmarkRepository());
+    }
+
+    @Bean
+    public BookmarkRepository bookmarkRepository() {
+      return new JpaBookmarkRepository(em);
     }
 
 }

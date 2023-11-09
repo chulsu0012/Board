@@ -15,8 +15,8 @@ import lombok.ToString;
 @Table(name="BOOKMARKTABLE")
 public class Bookmark {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="BOOKMARKID")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookmarkId;
     @Column(name="USERID")
     private Long userId;
