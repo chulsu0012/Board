@@ -42,12 +42,7 @@ public class BookmarkService {
         // userId: SESSION
         return bookmarkRepository.findAll(userId);
     }
-
-    //검색
-    public Optional<Bookmark> findOne(Long userId, Long postId) {
-        return bookmarkRepository.findByPostId(userId, postId);
-    }
-
+    
 
     //테스트용
     public Optional<Bookmark> findTest(Long bookmarkId) {
