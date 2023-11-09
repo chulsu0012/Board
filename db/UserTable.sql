@@ -1,4 +1,4 @@
-drop table if exists UserTable CASCADE;
+
 create table UserTable(
     userId bigint not null auto_increment,
     userName char(20) not null,
