@@ -38,8 +38,9 @@ public class BookmarkService {
     }
     
     //조회
-    public List<Bookmark> loadBookmark(Bookmark bookmark) {
-        return bookmarkRepository.findAll(bookmark.getUserId());
+    public List<Bookmark> loadBookmark(Long userId) {
+        // userId: SESSION
+        return bookmarkRepository.findAll(userId);
     }
 
     //검색
