@@ -18,33 +18,35 @@ public class BookmarkService {
     }
 
     //등록
-    public Long save(Bookmark bookmark) {
+    public Long doBookmark(Bookmark bookmark) {
         // 중복 등록 검증
         validateDuplicateBookmark(bookmark);
-        bookmarkRepository.save(bookmark);
+        bookmarkRepository.saveBookmark(bookmark);
         return bookmark.getBookmarkId();
     }
 
     private void validateDuplicateBookmark(Bookmark bookmark) {
-        bookmarkRepository.findByPostId(bookmark.getPostId())
+        bookmarkRepository.findByPostId((bookmark.getUserId()), (bookmark.getPostId()))
             .ifPresent(b -> {
                 throw new IllegalStateException("이미 북마크에 등록된 게시물입니다.");
             });
     }
 
+    //삭제
+    public Long notBookmark(Long bookmarkId) {
+        return bookmarkRepository.deleteBookmark(bookmarkId);
+    }
+    
     //조회
-    public List<Bookmark> load(Long userId) {
+    public List<Bookmark> loadBookmark(Long userId) {
+        // userId: SESSION
         return bookmarkRepository.findAll(userId);
     }
+    
 
-    //검색
-    public Optional<Bookmark> find(Long postId) {
-        return bookmarkRepository.findByPostId(postId);
-    }
-
-    //삭제
-    public void delete(Long bookmarkId) {
-        bookmarkRepository.delete(bookmarkId);
+    //테스트용
+    public Optional<Bookmark> findTest(Long bookmarkId) {
+        return bookmarkRepository.findById(bookmarkId);
     }
 
 }

@@ -6,9 +6,9 @@ import java.util.Optional;
 import com.release.core.bookmark.domain.Bookmark;
 
 public interface BookmarkRepository {
-    Bookmark save(Bookmark bookmark);
-    void delete(Long bookmarkId);
-    Optional<Bookmark> findByBookmarkId(Long bookmarkId);
-    Optional<Bookmark> findByPostId(Long postId);
+    Bookmark saveBookmark(Bookmark bookmark);
+    Long deleteBookmark(Long bookmarkId);
+    Optional<Bookmark> findById(Long bookmarkId);
+    Optional<Bookmark> findByPostId(Long userId, Long postId);
     List<Bookmark> findAll(Long userId);
 }
