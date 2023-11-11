@@ -38,9 +38,9 @@ class BookmarkServiceTest {
 
   @Test
   void 북마크삭제() {
-    //given
-    Long bookmarkId = bookmarkService.notBookmark(10L);
-    assertEquals(bookmarkId, 10L);
+    //then
+    Long bookmarkId = bookmarkService.notBookmark(3L);
+    assertEquals(bookmarkId, 3L);
   }
 
   @Test
