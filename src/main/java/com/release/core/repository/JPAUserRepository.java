@@ -28,7 +28,7 @@ public class JPAUserRepository implements UserRepository{
 
     @Override
     public Optional<User> findByName(String name) {
-        List<User> result = em.createQuery("select m from User m where m.userName = :name", User.class)
+        List<User> result = em.createQuery("select u from User u where u.userName = :name", User.class)
                 .setParameter("name", name)
                 .getResultList();
         return result.stream().findAny();
@@ -36,7 +36,31 @@ public class JPAUserRepository implements UserRepository{
 
     @Override
     public List<User> findAll() {
-        return em.createQuery("select m from User m", User.class)
+        return em.createQuery("select u from User u", User.class)
                 .getResultList();
     }
+    @Override
+    public void delete(User user) {
+        em.remove(user);
+    }
+    @Override
+    public User update(User user) {
+        return em.merge(user);
+    }
+
+    // 추가적인 사용자 관리 기능
+    @Override
+    public List<User> findAdminUsers() {
+        return em.createQuery("select u from User u where u.UserIsAdmin = 1", User.class)
+                .getResultList();
+    }
+
+    @Override
+    public List<User> findUsersWithPagination(int page, int pageSize) {
+        return em.createQuery("select u from User u", User.class)
+                .setFirstResult((page - 1) * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
 }

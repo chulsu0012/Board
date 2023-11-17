@@ -14,5 +14,12 @@ public interface UserRepository{
     Optional<User> findByName(String name);
     List<User> findAll();
 
+    void delete(User user);
+
+    User update(User user);
+
+    List<User> findAdminUsers();
+
+    List<User> findUsersWithPagination(int page, int pageSize);
     // 필요한 추가적인 쿼리 메서드 정의
 }
