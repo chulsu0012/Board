@@ -32,4 +32,23 @@ public class JPAPostRepository implements PostRepository {
                 .setParameter("userId", writerUserId)
                 .getResultList();
     }
+
+    @Override
+    public List<Post> findByTripDays(Long tripDays) {
+        return em.createQuery("select p from Post p where p.postTripDays=:trip_days", Post.class)
+                .setParameter("trip_days", tripDays)
+                .getResultList();
+    }
+
+    @Override
+    public List<Post> getAllPosts() {
+        return em.createQuery("select p from Post p", Post.class).getResultList();
+    }
+
+    @Override
+    public List<Post> findByPostDate(String postData) {
+        return em.createQuery("select p from Post p where p.postDate=:post_date", Post.class)
+                .setParameter("post_date", postData)
+                .getResultList();
+    }
 }

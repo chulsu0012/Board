@@ -14,5 +14,9 @@ public interface PostRepository {
 
     List<Post> findByWriterUserId(Long writerUserId);
 
-    //List<Post> searchPosts(int num);
+    List<Post> findByTripDays(Long tripDays);
+
+    List<Post> getAllPosts();
+
+    List<Post> findByPostDate(String postData);
 }

@@ -4,6 +4,7 @@ import com.release.core.bookmark.repository.BookmarkRepository;
 import com.release.core.bookmark.repository.JpaBookmarkRepository;
 import com.release.core.bookmark.service.BookmarkService;
 import com.release.core.repository.*;
+import com.release.core.service.PostService;
 import com.release.core.service.UserService;
 import jakarta.persistence.EntityManager;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -41,6 +42,9 @@ public class AppConfig{
     public PostRepository postRepository() {
         return new JPAPostRepository(em);
     }
+
+    @Bean
+    public PostService postService() {return new PostService(postRepository());}
 
     // Bookmark
     @Bean
