@@ -8,10 +8,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class JdbcTemplateUserRepository implements UserRepository{
     private final JdbcTemplate jdbcTemplate;
@@ -62,4 +59,25 @@ public class JdbcTemplateUserRepository implements UserRepository{
             return user;
         };
     }
+
+    @Override
+    public void delete(User user) {
+        return;
+    }
+
+    @Override
+    public User update(User user) {
+        return user;
+    }
+
+    @Override
+    public List<User> findAdminUsers() {
+        return null;
+    }
+
+    @Override
+    public List<User> findUsersWithPagination(int page, int pageSize) {
+        return null;
+    }
+
 }
