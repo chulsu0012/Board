@@ -51,4 +51,15 @@ public class JPAPostRepository implements PostRepository {
                 .setParameter("post_date", postData)
                 .getResultList();
     }
+
+    @Override
+    public boolean delete(Long postId) {
+        Optional<Post> post = findById(postId);
+        if(post.isPresent()) {
+            em.remove(post.get());
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

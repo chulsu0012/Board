@@ -14,4 +14,6 @@ public interface PostTagsConnectionRepository {
     List<PostTagsConnection> findByPostId(Long postId);
 
     List<PostTagsConnection> findByTagId(Long tagId);
+
+    boolean delete(Long connectionId);
 }

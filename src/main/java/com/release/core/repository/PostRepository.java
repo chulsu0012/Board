@@ -19,4 +19,6 @@ public interface PostRepository {
     List<Post> getAllPosts();
 
     List<Post> findByPostDate(String postData);
+
+    boolean delete(Long postId);
 }

@@ -55,6 +55,7 @@ public class PostService {
     public Long write(Post post, List<Long> tagIdList) {
         boolean isValid = checkValidatePost(post);
         if(isValid) {
+            post.setTagIdList(tagIdList);
             postRepository.save(post);
 
             for(Long tagId : tagIdList) {
@@ -118,5 +119,20 @@ public class PostService {
 
     public List<Post> findByTag(List<Long> tagIdList, int start, int end) {
         return getPartOfList(findByTag(tagIdList), start, end);
+    }
+
+    public boolean deletePost(Long postId) {
+        Optional<Post> post = findOne(postId);
+        if(post.isPresent()) {
+            List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByPostId(postId);
+            for(PostTagsConnection connection : connectionList) {
+                postTagsConnectionRepository.delete(connection.getConnectionId());
+            }
+            postRepository.delete(postId);
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }

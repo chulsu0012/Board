@@ -39,4 +39,15 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
                 .setParameter("tagId", tagId)
                 .getResultList();
     }
+
+    @Override
+    public boolean delete(Long connectionId) {
+        Optional<PostTagsConnection> postTagsConnection = findById(connectionId);
+        if(postTagsConnection.isPresent()) {
+            em.remove(postTagsConnection.get());
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
