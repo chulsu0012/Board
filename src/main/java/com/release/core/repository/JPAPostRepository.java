@@ -17,7 +17,7 @@ public class JPAPostRepository implements PostRepository {
     @Override
     public Post save(Post post) {
         em.persist(post);
-        return null;
+        return post;
     }
 
     @Override
