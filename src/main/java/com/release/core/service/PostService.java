@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class PostService {
 
+
+
+
     private final PostRepository postRepository;
     private final PostTagsConnectionRepository postTagsConnectionRepository;
     private final TagRepository tagRepository;
@@ -75,31 +78,39 @@ public class PostService {
 
     public Optional<Post> findOne(Long postId) {return postRepository.findById(postId);}
 
-    public List<Post> findAll() {return postRepository.getAllPosts();}
+    public List<Post> findAll(int start) {return postRepository.getAllPosts(start);}
 
-    public List<Post> findAll(int start, int end) {
-        List<Post> allPosts = findAll();
 
-        return getPartOfList(allPosts, start, end);
+    public List<Post> findByTripDays(Long tripDays, int start) {
+        return postRepository.findByTripDays(tripDays, start);
     }
 
-    public List<Post> findByTripDays(Long tripDays) {return postRepository.findByTripDays(tripDays);}
+    public List<Post> findByTripDays(Long tripDays) {
+        return findByTripDays(tripDays, 0);
+    }
+
+    public List<Post> findByPostDate(LocalDate date, int start) {
+        String dateString = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        return postRepository.findByPostDate(dateString, start);
+    }
 
     public List<Post> findByPostDate(LocalDate date) {
-        String dateString = date.format(DateTimeFormatter.ISO_LOCAL_DATE);
-        return postRepository.findByPostDate(dateString);
+        return findByPostDate(date, 0);
     }
 
-    public List<Post> findByPostDate(LocalDate startDate, LocalDate endDate) {
+    public List<Post> findByPostDate(LocalDate startDate, LocalDate endDate, int start) {
         List<Post> result = new ArrayList<Post>();
 
         long days = ChronoUnit.DAYS.between(startDate, endDate);
         for(int delta=0; delta<=days; delta++) {
             LocalDate iterDate = startDate.plusDays(delta);
-            result.addAll(findByPostDate(iterDate));
+            result.addAll(findByPostDate(iterDate, start));
         }
-
         return result;
+    }
+
+    public List<Post> findByPostDate(LocalDate startDate, LocalDate endDate) {
+        return findByPostDate(startDate, endDate, 0);
     }
 
     public List<Post> findByTag(List<Long> tagIdList) {
@@ -116,6 +127,7 @@ public class PostService {
         }
         return result;
     }
+
 
 
 

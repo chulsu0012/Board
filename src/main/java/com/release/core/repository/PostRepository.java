@@ -12,13 +12,13 @@ public interface PostRepository {
 
     Optional<Post> findById(Long postId);
 
-    List<Post> findByWriterUserId(Long writerUserId);
+    List<Post> findByWriterUserId(Long writerUserId, int start);
 
-    List<Post> findByTripDays(Long tripDays);
+    List<Post> findByTripDays(Long tripDays, int start);
 
-    List<Post> getAllPosts();
+    List<Post> getAllPosts(int start);
 
-    List<Post> findByPostDate(String postData);
+    List<Post> findByPostDate(String postData, int start);
 
     boolean delete(Long postId);
 }

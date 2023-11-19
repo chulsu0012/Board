@@ -86,6 +86,11 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public String login(String username, String password) {
+        return null;
+    }
+
+    @Override
     public Long join(User user) {
         validateDuplicateUser(user);
         userRepository.save(user);
