@@ -1,52 +1,32 @@
 package com.release.core.service;
 
 import com.release.core.domain.User;
-import com.release.core.repository.MemoryUserRepository;
-import com.release.core.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+public interface UserService {
+    User save(User user);
+    Optional<User> findById(Long id);
+    Optional<User> findByName(String name);
+    List<User> findAll();
+    /*
+    User createUser(User user);
+    */
+    User updateUser(User user);
+    void deleteUser(User user);
 
-@Transactional
-public class UserService {
+    List<User> findAdminUsers();
+    List<User> findUsersWithPagination(int page, int pageSize);
 
-    private final UserRepository userRepository;
+    Long join(User user);
+    void validateDuplicateUser(User user);
 
+    String login(String username, String password);
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-    //private final UserRepository userRepository = new
-    //       MemoryUserRepository();
+    /*
+    User updateUser(Long userId, User updatedUser);
 
-    /**
-     * 회원가입
+    void deleteUser(Long userId);
      */
-    public Long join(User user){
-        validateDuplicateUser(user); //중복 회원 검증
-        userRepository.save(user);
-        return user.getId();
-    }
-    private void validateDuplicateUser(User user) {
-        userRepository.findByName(user.getName())
-                .ifPresent(m -> {
-                    throw new IllegalStateException("이미 존재하는 회원입니다.");
-                });
-    }
-
-    /**
-     * 전체 회원 조회
-     */
-    public List<User> findUsers(){
-        return userRepository.findAll();
-    }
-
-    public Optional<User> findOne(Long memberId) {
-        return userRepository.findById(memberId);
-    }
-
 }

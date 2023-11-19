@@ -14,9 +14,9 @@ public interface UserRepository{
     Optional<User> findByName(String name);
     List<User> findAll();
 
-    void delete(User user);
+    void deleteUser(User user);
 
-    User update(User user);
+    User updateUser(User user);
 
     List<User> findAdminUsers();
 

@@ -2,6 +2,7 @@ package com.release.core.repository;
 
 import com.release.core.domain.User;
 import jakarta.persistence.EntityManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ public class JPAUserRepository implements UserRepository{
     }
 
     @Override
+    @Transactional
     public User save(User user) {
         em.persist(user);
         return user;
@@ -40,11 +42,11 @@ public class JPAUserRepository implements UserRepository{
                 .getResultList();
     }
     @Override
-    public void delete(User user) {
+    public void deleteUser(User user) {
         em.remove(user);
     }
     @Override
-    public User update(User user) {
+    public User updateUser(User user) {
         return em.merge(user);
     }
 

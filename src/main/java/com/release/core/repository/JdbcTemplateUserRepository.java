@@ -61,12 +61,12 @@ public class JdbcTemplateUserRepository implements UserRepository{
     }
 
     @Override
-    public void delete(User user) {
+    public void deleteUser(User user) {
         return;
     }
 
     @Override
-    public User update(User user) {
+    public User updateUser(User user) {
         return user;
     }
 

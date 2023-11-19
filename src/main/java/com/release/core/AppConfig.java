@@ -6,6 +6,7 @@ import com.release.core.bookmark.service.BookmarkService;
 import com.release.core.repository.*;
 import com.release.core.service.PostService;
 import com.release.core.service.UserService;
+import com.release.core.service.UserServiceImpl;
 import jakarta.persistence.EntityManager;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -28,7 +29,7 @@ public class AppConfig{
     // User
     @Bean
     public UserService userService() {
-        return new UserService(userRepository());
+        return new UserServiceImpl(userRepository());
     }
     @Bean
     public UserRepository userRepository() {
