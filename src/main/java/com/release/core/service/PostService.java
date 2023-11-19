@@ -117,6 +117,8 @@ public class PostService {
         return result;
     }
 
+
+
     public List<Post> findByTag(List<Long> tagIdList, int start, int end) {
         return getPartOfList(findByTag(tagIdList), start, end);
     }
@@ -134,5 +136,15 @@ public class PostService {
         } else {
             return false;
         }
+    }
+
+    public Post applyTagIdList(Post post) {
+        List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByPostId(post.getPostId());
+        ArrayList<Long> tagIdList = new ArrayList<>();
+        for(PostTagsConnection connection : connectionList) {
+            tagIdList.add(connection.getTagId());
+        }
+        post.setTagIdList(tagIdList);
+        return post;
     }
 }

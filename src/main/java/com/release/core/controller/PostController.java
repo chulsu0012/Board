@@ -1,5 +1,6 @@
 package com.release.core.controller;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.release.core.domain.Post;
 import com.release.core.service.PostService;
 import jakarta.servlet.http.Cookie;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -75,9 +77,10 @@ public class PostController {
     @GetMapping("post-read")
     @ResponseBody
     public Post postRead(@RequestParam("postId") Long postId) {
-        Optional<Post> post = postService.findOne(postId);
-        if(post.isPresent()) {
-            return post.get();
+        Optional<Post> optionalPost = postService.findOne(postId);
+        if(optionalPost.isPresent()) {
+            Post post = postService.applyTagIdList(optionalPost.get());
+            return post;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
         }
