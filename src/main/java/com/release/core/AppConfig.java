@@ -38,6 +38,20 @@ public class AppConfig{
         return new JPAUserRepository(em);
     }
 
+
+    // Category
+    @Bean
+    public CategoryRepository categoryRepository() {return new JPACategoryRepository(em);}
+
+    // Tag
+    @Bean
+    public TagRepository tagRepository() {return new JPATagRepository(em);}
+
+    // PostTagsConnection
+    @Bean
+    public PostTagsConnectionRepository postTagsConnectionRepository() {return new JPAPostTagsConnectionRepository(em);}
+
+
     // Post
     @Bean
     public PostRepository postRepository() {
@@ -45,7 +59,8 @@ public class AppConfig{
     }
 
     @Bean
-    public PostService postService() {return new PostService(postRepository());}
+    public PostService postService() {return new PostService(postRepository(), postTagsConnectionRepository(), tagRepository(), categoryRepository());}
+
 
     // Bookmark
     @Bean

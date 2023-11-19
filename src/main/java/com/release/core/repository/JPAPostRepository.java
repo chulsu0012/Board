@@ -17,7 +17,7 @@ public class JPAPostRepository implements PostRepository {
     @Override
     public Post save(Post post) {
         em.persist(post);
-        return null;
+        return post;
     }
 
     @Override
@@ -50,5 +50,16 @@ public class JPAPostRepository implements PostRepository {
         return em.createQuery("select p from Post p where p.postDate=:post_date", Post.class)
                 .setParameter("post_date", postData)
                 .getResultList();
+    }
+
+    @Override
+    public boolean delete(Long postId) {
+        Optional<Post> post = findById(postId);
+        if(post.isPresent()) {
+            em.remove(post.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 }

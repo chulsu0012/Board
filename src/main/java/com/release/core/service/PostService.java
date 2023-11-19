@@ -1,8 +1,12 @@
 package com.release.core.service;
 
 import com.release.core.domain.Post;
+import com.release.core.domain.PostTagsConnection;
 import com.release.core.domain.User;
+import com.release.core.repository.CategoryRepository;
 import com.release.core.repository.PostRepository;
+import com.release.core.repository.PostTagsConnectionRepository;
+import com.release.core.repository.TagRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -16,12 +20,51 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    public PostService(PostRepository postRepository) {this.postRepository = postRepository;}
+    private final PostTagsConnectionRepository postTagsConnectionRepository;
+    private final TagRepository tagRepository;
 
-    public Long write(Post post) {
+    private final CategoryRepository categoryRepository;
+
+
+    public PostService(PostRepository postRepository, PostTagsConnectionRepository postTagsConnectionRepository, TagRepository tagRepository, CategoryRepository categoryRepository) {
+        this.postRepository = postRepository;
+        this.postTagsConnectionRepository = postTagsConnectionRepository;
+        this.tagRepository = tagRepository;
+        this.categoryRepository = categoryRepository;
+    }
+
+    public static <T> List<T> getPartOfList(List<T> list, int start, int end) {
+        if(start >= end) {return new ArrayList<T>();}
+        if(list.size() < start) {return new ArrayList<T>();}
+        else {
+            if(list.size() < end) {
+                end = list.size();
+            }
+
+            ArrayList<T> result = new ArrayList<>();
+            for(int i=0; i<end; i++) {
+                if(i >= start) {
+                    result.add(list.get(i));
+                }
+            }
+
+            return result;
+        }
+    }
+
+    public Long write(Post post, List<Long> tagIdList) {
         boolean isValid = checkValidatePost(post);
         if(isValid) {
+            post.setTagIdList(tagIdList);
             postRepository.save(post);
+
+            for(Long tagId : tagIdList) {
+                PostTagsConnection postTagConnection = new PostTagsConnection();
+                postTagConnection.setPostId(post.getPostId());
+                postTagConnection.setTagId(tagId);
+                postTagsConnectionRepository.save(postTagConnection);
+            }
+
             return post.getPostId();
         } else {return null;}
     }
@@ -34,12 +77,10 @@ public class PostService {
 
     public List<Post> findAll() {return postRepository.getAllPosts();}
 
-    public List<Post> findAll(int num) {
+    public List<Post> findAll(int start, int end) {
         List<Post> allPosts = findAll();
-        if(allPosts.size() <= num) {return allPosts;}
-        else {
-            return allPosts.stream().limit(num).collect(Collectors.toList());
-        }
+
+        return getPartOfList(allPosts, start, end);
     }
 
     public List<Post> findByTripDays(Long tripDays) {return postRepository.findByTripDays(tripDays);}
@@ -59,5 +100,51 @@ public class PostService {
         }
 
         return result;
+    }
+
+    public List<Post> findByTag(List<Long> tagIdList) {
+        ArrayList<Post> result = new ArrayList<>();
+        for(Long tagId : tagIdList) {
+            List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByTagId(tagId);
+
+            for(PostTagsConnection postTagConnection : connectionList) {
+                Post post = postRepository.findById(postTagConnection.getPostId()).get();
+                if(!result.contains(post)) {
+                    result.add(post);
+                }
+            }
+        }
+        return result;
+    }
+
+
+
+    public List<Post> findByTag(List<Long> tagIdList, int start, int end) {
+        return getPartOfList(findByTag(tagIdList), start, end);
+    }
+
+    public boolean deletePost(Long postId) {
+        Optional<Post> post = findOne(postId);
+        if(post.isPresent()) {
+            List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByPostId(postId);
+            for(PostTagsConnection connection : connectionList) {
+                postTagsConnectionRepository.delete(connection.getConnectionId());
+            }
+            postRepository.delete(postId);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Post applyTagIdList(Post post) {
+        List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByPostId(post.getPostId());
+        ArrayList<Long> tagIdList = new ArrayList<>();
+        for(PostTagsConnection connection : connectionList) {
+            tagIdList.add(connection.getTagId());
+        }
+        post.setTagIdList(tagIdList);
+        return post;
     }
 }
