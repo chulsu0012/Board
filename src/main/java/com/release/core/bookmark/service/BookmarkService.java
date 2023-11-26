@@ -33,8 +33,8 @@ public class BookmarkService {
     }
 
     //삭제
-    public Long notBookmark(Long bookmarkId) {
-        return bookmarkRepository.deleteBookmark(bookmarkId);
+    public void notBookmark(Long bookmarkId) {
+        bookmarkRepository.deleteBookmark(bookmarkId);
     }
     
     //조회

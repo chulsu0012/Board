@@ -7,7 +7,7 @@ import com.release.core.bookmark.domain.Bookmark;
 
 public interface BookmarkRepository {
     Bookmark saveBookmark(Bookmark bookmark);
-    Long deleteBookmark(Long bookmarkId);
+    void deleteBookmark(Long bookmarkId);
     Optional<Bookmark> findById(Long bookmarkId);
     Optional<Bookmark> findByPostId(Long userId, Long postId);
     List<Bookmark> findAll(Long userId);

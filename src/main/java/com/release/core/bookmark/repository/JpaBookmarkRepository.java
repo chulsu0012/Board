@@ -22,11 +22,9 @@ public class JpaBookmarkRepository implements BookmarkRepository {
     }
 
     @Override
-    public Long deleteBookmark(Long bookmarkId) {
+    public void deleteBookmark(Long bookmarkId) {
         Bookmark bookmark = em.find(Bookmark.class, bookmarkId);
-        Long deletedBookmarkId = bookmark.getBookmarkId();
         em.remove(bookmark);
-        return deletedBookmarkId;
     }
 
     @Override

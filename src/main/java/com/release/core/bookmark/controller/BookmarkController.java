@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.release.core.bookmark.domain.Bookmark;
 import com.release.core.bookmark.service.BookmarkService;
-import com.release.core.domain.Post;
+import com.release.core.domain.User;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class BookmarkController {
@@ -28,10 +30,12 @@ public class BookmarkController {
   // 북마크 등록
   // 해당 포스트 내에서 실행
   @PostMapping("/bookmarksave")
-  public String save(Long postId) {
+  public String save(Long postId, HttpSession session) {
+    User user = (User) session.getAttribute("loginUser");
+
     Bookmark bookmark = new Bookmark();
+    bookmark.setUserId(user.getUserId());
     bookmark.setPostId(postId);
-    bookmark.setUserId(userId);
     
     bookmarkService.doBookmark(bookmark);
 
@@ -40,8 +44,10 @@ public class BookmarkController {
 
   // 북마크 조회
   @GetMapping("/bookmarkload")
-  public String load(Model model) {
-    List<Bookmark> bookmarks = bookmarkService.loadBookmark(userId);
+  public String load(Model model, HttpSession session) {
+    User user = (User) session.getAttribute("loginUser");
+
+    List<Bookmark> bookmarks = bookmarkService.loadBookmark(user.getUserId());
     model.addAttribute("bookmarks", bookmarks);
     return "bookmarks/bookmarkList";
   }
@@ -51,7 +57,7 @@ public class BookmarkController {
   // 2. 북마크 리스트 내에서 실행
   @PostMapping("/bookmarkdelete")
   public String delete(Long bookmarkId) {
-    Long returnBookmarkId = bookmarkService.notBookmark(bookmarkId);
+    bookmarkService.notBookmark(bookmarkId);
     return "redirect:/";
   }
 
