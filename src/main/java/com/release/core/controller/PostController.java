@@ -2,9 +2,12 @@ package com.release.core.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.release.core.domain.Post;
+import com.release.core.dto.PostEditFormDTO;
+import com.release.core.dto.PostWriteFormDTO;
 import com.release.core.service.PostService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.ibatis.annotations.Delete;
 import org.mybatis.logging.Logger;
 import org.mybatis.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,30 +36,52 @@ public class PostController {
         return new ResponseEntity<>("Welcome user " + userId, HttpStatus.OK);
     }
 
+    @GetMapping("post-search")
+    @ResponseBody
+    public List<Post> postSearch(@CookieValue(name="userId", required = false) Long userId,
+                                 @RequestParam("tagId") List<Long> tagIdList,
+                                 @RequestParam("page") Long page,
+                                 @RequestParam("tripDays") Long tripDays) {
+        return postService.search(tagIdList, page, tripDays);
+    }
 
     // 게시물 등록
-    @GetMapping("post-write")
+    @PostMapping("post-write")
     @ResponseBody
     public Post postWrite(@CookieValue(name="userId", required = false) Long userId,
-                          @RequestParam("postTitle") String postTitle,
-                          @RequestParam("postDate") String postDate,
-                          @RequestParam("content") String content,
-                          @RequestParam("tripDays") Long tripDays,
-                          @RequestParam("tagId") List<Long> tagIdList) {
+                          PostWriteFormDTO form) {
         Post post = new Post();
-        post.setPostTitle(postTitle);
-        post.setPostDate(postDate);
-        post.setPostContent(content);
-        post.setPostTripDays(tripDays);
+        post.setPostTitle(form.getPostTitle());
+        post.setPostDate(form.getPostDate());
+        post.setPostContent(form.getContent());
+        post.setPostTripDays(form.getTripDays());
         post.setWriterUserId(userId);
-        post.setTagIdList(tagIdList);
-
-        postService.write(post, tagIdList);
+        post.setTagIdList(form.getTagIdList());
+        postService.write(post, form.getTagIdList());
         return post;
     }
 
-    // 게시물 조회
-    @GetMapping("post-delete")
+    @PutMapping("post-edit")
+    @ResponseBody
+    public ResponseEntity<String> postEdit(@CookieValue(name="userId", required = false) Long userId,
+                          PostEditFormDTO form) {
+
+        Optional<Post> postOptional = postService.findOne(form.getPostId());
+        if(postOptional.isPresent()) {
+            if(Objects.equals(postOptional.get().getWriterUserId(), userId)) {
+                postService.deletePost(form.getPostId());
+                return new ResponseEntity<>("Edit the post completely.", HttpStatus.OK);
+            } else {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access Denied");
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+        }
+    }
+
+
+    // 게시물 삭제
+    @DeleteMapping("post-delete")
     @ResponseBody
     public ResponseEntity<String> postDelete(@CookieValue(name="userId", required = false) Long userId,
                             @RequestParam("postId") Long postId) {

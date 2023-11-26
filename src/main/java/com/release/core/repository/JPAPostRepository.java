@@ -32,7 +32,7 @@ public class JPAPostRepository implements PostRepository {
     public List<Post> findByWriterUserId(Long writerUserId, int start) {
         return em.createQuery("select p from Post p where p.writerUserId=:userId", Post.class)
                 .setParameter("userId", writerUserId)
-                .setFirstResult(start)
+                .setFirstResult(PAGE_POST_NUM * start)
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
@@ -41,7 +41,7 @@ public class JPAPostRepository implements PostRepository {
     public List<Post> findByTripDays(Long tripDays, int start) {
         return em.createQuery("select p from Post p where p.postTripDays=:trip_days", Post.class)
                 .setParameter("trip_days", tripDays)
-                .setFirstResult(start)
+                .setFirstResult(PAGE_POST_NUM * start)
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
@@ -49,7 +49,7 @@ public class JPAPostRepository implements PostRepository {
     @Override
     public List<Post> getAllPosts(int start) {
         return em.createQuery("select p from Post p", Post.class)
-                .setFirstResult(start)
+                .setFirstResult(PAGE_POST_NUM * start)
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
@@ -58,7 +58,7 @@ public class JPAPostRepository implements PostRepository {
     public List<Post> findByPostDate(String postData, int start) {
         return em.createQuery("select p from Post p where p.postDate=:post_date", Post.class)
                 .setParameter("post_date", postData)
-                .setFirstResult(start)
+                .setFirstResult(PAGE_POST_NUM * start)
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
@@ -72,5 +72,16 @@ public class JPAPostRepository implements PostRepository {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<Post> search(List<Long> tagIdList, Long page, Long tripDays) {
+        return em.createQuery("select p from Post p INNER JOIN p.postId pid where ")
+                .setParameter("tripDays", tripDays)
+                .setParameter("tagIdList", tagIdList)
+                .setFirstResult(PAGE_POST_NUM * (int) (page-1))
+                .setMaxResults(PAGE_POST_NUM)
+                .getResultList();
+
     }
 }

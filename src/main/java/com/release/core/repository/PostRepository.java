@@ -20,5 +20,7 @@ public interface PostRepository {
 
     List<Post> findByPostDate(String postData, int start);
 
+    List<Post> search(List<Long> tagIdList, Long page, Long tripDays);
+
     boolean delete(Long postId);
 }

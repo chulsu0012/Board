@@ -159,4 +159,8 @@ public class PostService {
         post.setTagIdList(tagIdList);
         return post;
     }
+
+    public List<Post> search(List<Long> tagIdList, Long page, Long tripDays) {
+        return postRepository.search(tagIdList, page, tripDays);
+    }
 }
