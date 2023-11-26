@@ -1,5 +1,6 @@
 package com.release.core.repository;
 
+import com.release.core.domain.Post;
 import com.release.core.domain.PostTagsConnection;
 
 import java.util.List;
@@ -15,6 +16,9 @@ public interface PostTagsConnectionRepository {
 
     List<PostTagsConnection> findByTagId(Long tagId);
 
+    Optional<PostTagsConnection> findByPostIdAndTagId(Long postId, Long tagId);
+
+    List<Long> search(List<Long> tagIdList, Long page, Long tripDays);
 
     boolean delete(Long connectionId);
 }

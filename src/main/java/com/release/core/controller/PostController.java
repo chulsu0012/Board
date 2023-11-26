@@ -69,7 +69,7 @@ public class PostController {
         Optional<Post> postOptional = postService.findOne(form.getPostId());
         if(postOptional.isPresent()) {
             if(Objects.equals(postOptional.get().getWriterUserId(), userId)) {
-                postService.deletePost(form.getPostId());
+                postService.editPost(postOptional.get(), form);
                 return new ResponseEntity<>("Edit the post completely.", HttpStatus.OK);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access Denied");

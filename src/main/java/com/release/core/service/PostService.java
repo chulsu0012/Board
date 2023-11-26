@@ -3,6 +3,7 @@ package com.release.core.service;
 import com.release.core.domain.Post;
 import com.release.core.domain.PostTagsConnection;
 import com.release.core.domain.User;
+import com.release.core.dto.PostEditFormDTO;
 import com.release.core.repository.CategoryRepository;
 import com.release.core.repository.PostRepository;
 import com.release.core.repository.PostTagsConnectionRepository;
@@ -70,6 +71,27 @@ public class PostService {
 
             return post.getPostId();
         } else {return null;}
+    }
+
+    public boolean editPost(Post post, PostEditFormDTO form) {
+        post = applyTagIdList(post);
+        List<PostTagsConnection> oldPostTagsConnectionOptional = postTagsConnectionRepository.findByPostId(post.getPostId());
+        for(PostTagsConnection connection : oldPostTagsConnectionOptional) {postTagsConnectionRepository.delete(connection.getConnectionId());}
+
+        post.setPostTitle(form.getPostTitle());
+        post.setPostDate(form.getPostDate());
+        post.setPostContent(form.getContent());
+        post.setPostTripDays(form.getTripDays());
+        postRepository.save(post);
+
+        for(Long tagId : form.getTagIdList()) {
+            PostTagsConnection postTagConnection = new PostTagsConnection();
+            postTagConnection.setPostId(post.getPostId());
+            postTagConnection.setTagId(tagId);
+            postTagsConnectionRepository.save(postTagConnection);
+        }
+
+        return true;
     }
 
     public boolean checkValidatePost(Post post) {
@@ -161,6 +183,15 @@ public class PostService {
     }
 
     public List<Post> search(List<Long> tagIdList, Long page, Long tripDays) {
-        return postRepository.search(tagIdList, page, tripDays);
+        List<Long> connectionList = postTagsConnectionRepository.search(tagIdList, page, tripDays);
+        ArrayList<Post> postList = new ArrayList<>();
+        for(Long postId : connectionList) {
+            Optional<Post> postOptional = postRepository.findById(postId);
+            if(postOptional.isPresent()) {
+                postList.add(postOptional.get());
+            }
+        }
+        return postList;
     }
+
 }

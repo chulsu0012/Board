@@ -1,13 +1,18 @@
 package com.release.core.repository;
 
+import com.release.core.AppConfig;
+import com.release.core.domain.Post;
 import com.release.core.domain.PostTagsConnection;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class JPAPostTagsConnectionRepository implements PostTagsConnectionRepository{
     private final EntityManager em;
+
+    public static final int PAGE_POST_NUM = 30;
 
     public JPAPostTagsConnectionRepository(EntityManager em) {
         this.em = em;
@@ -41,6 +46,14 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
     }
 
     @Override
+    public Optional<PostTagsConnection> findByPostIdAndTagId(Long postId, Long tagId) {
+        return Optional.ofNullable((PostTagsConnection) em.createQuery("select c from PostTagsConnection c where c.postId=:postId and c.tagId=:tagId")
+                .setParameter("postId", postId)
+                .setParameter("tagId", tagId)
+                .getSingleResult());
+    }
+
+    @Override
     public boolean delete(Long connectionId) {
         Optional<PostTagsConnection> postTagsConnection = findById(connectionId);
         if(postTagsConnection.isPresent()) {
@@ -49,5 +62,22 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<Long> search(List<Long> tagIdList, Long page, Long tripDays) {
+        String tagIdListStr = "(" + tagIdList.get(0);
+        for(Long tagId : tagIdList.stream().skip(1).toList()) {
+            tagIdListStr += ",";
+            tagIdListStr += tagId;
+        }
+        tagIdListStr += ")";
+
+        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.tagId in :tagIdList and c.postId in (select p.postId from Post p where p.postTripDays=:tripDays)")
+                .setParameter("tagIdList", tagIdList)
+                .setParameter("tripDays", tripDays)
+                .setFirstResult(PAGE_POST_NUM * (int) (page-1))
+                .setMaxResults(PAGE_POST_NUM)
+                .getResultList();
     }
 }

@@ -22,6 +22,7 @@ public class JPAPostRepository implements PostRepository {
         return post;
     }
 
+
     @Override
     public Optional<Post> findById(Long postId) {
         Post post = em.find(Post.class, postId);
@@ -72,16 +73,5 @@ public class JPAPostRepository implements PostRepository {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public List<Post> search(List<Long> tagIdList, Long page, Long tripDays) {
-        return em.createQuery("select p from Post p INNER JOIN p.postId pid where ")
-                .setParameter("tripDays", tripDays)
-                .setParameter("tagIdList", tagIdList)
-                .setFirstResult(PAGE_POST_NUM * (int) (page-1))
-                .setMaxResults(PAGE_POST_NUM)
-                .getResultList();
-
     }
 }
