@@ -1,10 +1,10 @@
-package com.release.core.bookmark.service;
+package com.release.core.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.release.core.bookmark.domain.Bookmark;
-import com.release.core.bookmark.repository.BookmarkRepository;
+import com.release.core.domain.Bookmark;
+import com.release.core.repository.BookmarkRepository;
 
 import jakarta.transaction.Transactional;
 

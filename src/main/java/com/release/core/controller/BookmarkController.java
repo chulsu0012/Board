@@ -1,4 +1,4 @@
-package com.release.core.bookmark.controller;
+package com.release.core.controller;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.release.core.bookmark.domain.Bookmark;
-import com.release.core.bookmark.service.BookmarkService;
+import com.release.core.domain.Bookmark;
 import com.release.core.domain.Post;
+import com.release.core.service.BookmarkService;
 
 @Controller
 public class BookmarkController {

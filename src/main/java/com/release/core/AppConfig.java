@@ -1,9 +1,7 @@
 package com.release.core;
 
-import com.release.core.bookmark.repository.BookmarkRepository;
-import com.release.core.bookmark.repository.JpaBookmarkRepository;
-import com.release.core.bookmark.service.BookmarkService;
 import com.release.core.repository.*;
+import com.release.core.service.BookmarkService;
 import com.release.core.service.UserService;
 import jakarta.persistence.EntityManager;
 import org.apache.ibatis.session.SqlSessionFactory;

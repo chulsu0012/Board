@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.release.core.bookmark.domain.Bookmark;
-import com.release.core.bookmark.repository.BookmarkRepository;
-import com.release.core.bookmark.service.BookmarkService;
+import com.release.core.domain.Bookmark;
+import com.release.core.repository.BookmarkRepository;
+import com.release.core.service.BookmarkService;
 
 @SpringBootTest
 @Transactional

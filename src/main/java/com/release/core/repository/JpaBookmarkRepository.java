@@ -1,9 +1,9 @@
-package com.release.core.bookmark.repository;
+package com.release.core.repository;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.release.core.bookmark.domain.Bookmark;
+import com.release.core.domain.Bookmark;
 
 import jakarta.persistence.EntityManager;
 
