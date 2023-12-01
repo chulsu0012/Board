@@ -28,13 +28,13 @@ public class JpaBookmarkRepository implements BookmarkRepository {
     }
 
     @Override
-    public Optional<Bookmark> findById(Long bookmarkId) {
+    public Optional<Bookmark> findBookmarkByBookmarkId(Long bookmarkId) {
         Bookmark bookmark = em.find(Bookmark.class, bookmarkId);
         return Optional.ofNullable(bookmark);
     }
 
     @Override
-    public Optional<Bookmark> findByPostId(Long userId, Long postId) {
+    public Optional<Bookmark> findBookmarkByPostId(Long userId, Long postId) {
         return em.createQuery("select b from Bookmark b where b.userId = :userId and b.postId = :postId",
             Bookmark.class)
             .setParameter("userId", userId).setParameter("postId", postId)
@@ -42,7 +42,7 @@ public class JpaBookmarkRepository implements BookmarkRepository {
     }
 
     @Override
-    public List<Bookmark> findAll(Long userId) {
+    public List<Bookmark> findAllBookmarks(Long userId) {
         return em.createQuery("select * from Bookmark b where b.userId = :userId",
             Bookmark.class).setParameter("userId", userId)
             .getResultList();

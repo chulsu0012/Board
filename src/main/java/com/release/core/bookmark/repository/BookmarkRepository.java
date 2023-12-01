@@ -8,7 +8,7 @@ import com.release.core.bookmark.domain.Bookmark;
 public interface BookmarkRepository {
     Bookmark saveBookmark(Bookmark bookmark);
     void deleteBookmark(Long bookmarkId);
-    Optional<Bookmark> findById(Long bookmarkId);
-    Optional<Bookmark> findByPostId(Long userId, Long postId);
-    List<Bookmark> findAll(Long userId);
+    Optional<Bookmark> findBookmarkByBookmarkId(Long bookmarkId);
+    Optional<Bookmark> findBookmarkByPostId(Long userId, Long postId);
+    List<Bookmark> findAllBookmarks(Long userId);
 }

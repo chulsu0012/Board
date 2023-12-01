@@ -18,7 +18,7 @@ public class BookmarkService {
     }
 
     //등록
-    public Long doBookmark(Bookmark bookmark) {
+    public Long saveOne(Bookmark bookmark) {
         // 중복 등록 검증
         validateDuplicateBookmark(bookmark);
         bookmarkRepository.saveBookmark(bookmark);
@@ -26,27 +26,26 @@ public class BookmarkService {
     }
 
     private void validateDuplicateBookmark(Bookmark bookmark) {
-        bookmarkRepository.findByPostId((bookmark.getUserId()), (bookmark.getPostId()))
+        bookmarkRepository.findBookmarkByPostId((bookmark.getUserId()), (bookmark.getPostId()))
             .ifPresent(b -> {
                 throw new IllegalStateException("이미 북마크에 등록된 게시물입니다.");
             });
     }
 
     //삭제
-    public void notBookmark(Long bookmarkId) {
+    public void deleteOne(Long bookmarkId) {
         bookmarkRepository.deleteBookmark(bookmarkId);
     }
     
-    //조회
-    public List<Bookmark> loadBookmark(Long userId) {
+    //전체 조회
+    public List<Bookmark> findAll(Long userId) {
         // userId: SESSION
-        return bookmarkRepository.findAll(userId);
+        return bookmarkRepository.findAllBookmarks(userId);
     }
-    
 
-    //테스트용
-    public Optional<Bookmark> findTest(Long bookmarkId) {
-        return bookmarkRepository.findById(bookmarkId);
+    //단일 조회
+    public Optional<Bookmark> findOne(Long bookmarkId) {
+        return bookmarkRepository.findBookmarkByBookmarkId(bookmarkId);
     }
 
 }
