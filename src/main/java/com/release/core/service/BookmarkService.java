@@ -1,10 +1,10 @@
-package com.release.core.bookmark.service;
+package com.release.core.service;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.release.core.bookmark.domain.Bookmark;
-import com.release.core.bookmark.repository.BookmarkRepository;
+import com.release.core.domain.Bookmark;
+import com.release.core.repository.BookmarkRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -18,7 +18,7 @@ public class BookmarkService {
     }
 
     //등록
-    public Long doBookmark(Bookmark bookmark) {
+    public Long saveOne(Bookmark bookmark) {
         // 중복 등록 검증
         validateDuplicateBookmark(bookmark);
         bookmarkRepository.saveBookmark(bookmark);
@@ -26,27 +26,25 @@ public class BookmarkService {
     }
 
     private void validateDuplicateBookmark(Bookmark bookmark) {
-        bookmarkRepository.findByPostId((bookmark.getUserId()), (bookmark.getPostId()))
+        bookmarkRepository.findBookmarkByPostId((bookmark.getUserId()), (bookmark.getPostId()))
             .ifPresent(b -> {
                 throw new IllegalStateException("이미 북마크에 등록된 게시물입니다.");
             });
     }
 
     //삭제
-    public Long notBookmark(Long bookmarkId) {
-        return bookmarkRepository.deleteBookmark(bookmarkId);
+    public void deleteOne(Long bookmarkId) {
+        bookmarkRepository.deleteBookmark(bookmarkId);
     }
     
-    //조회
-    public List<Bookmark> loadBookmark(Long userId) {
-        // userId: SESSION
-        return bookmarkRepository.findAll(userId);
+    //전체 조회
+    public List<Bookmark> findAll(Long userId) {
+        return bookmarkRepository.findAllBookmarks(userId);
     }
-    
 
-    //테스트용
-    public Optional<Bookmark> findTest(Long bookmarkId) {
-        return bookmarkRepository.findById(bookmarkId);
+    //단일 조회
+    public Optional<Bookmark> findOne(Long bookmarkId) {
+        return bookmarkRepository.findBookmarkByBookmarkId(bookmarkId);
     }
 
 }

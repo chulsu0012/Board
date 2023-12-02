@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.release.core.bookmark.domain.Bookmark;
-import com.release.core.bookmark.repository.BookmarkRepository;
-import com.release.core.bookmark.service.BookmarkService;
+import com.release.core.domain.Bookmark;
+import com.release.core.repository.BookmarkRepository;
+import com.release.core.service.BookmarkService;
 
 @SpringBootTest
 @Transactional
@@ -28,19 +28,18 @@ class BookmarkServiceTest {
     bookmark.setUserId(5L);
     
     //when
-    Long saveId = bookmarkService.doBookmark(bookmark);
+    Long saveId = bookmarkService.saveOne(bookmark);
 
     //then
     // Bookmark findBookmark = bookmarkService.findOne(bookmark.getUserId(), bookmark.getPostId()).get();
-    Bookmark findBookmark = bookmarkService.findTest(saveId).get();
+    Bookmark findBookmark = bookmarkService.findOne(saveId).get();
     assertEquals(bookmark.getBookmarkId(), findBookmark.getBookmarkId());
   }
 
   @Test
   void 북마크삭제() {
     //then
-    Long bookmarkId = bookmarkService.notBookmark(3L);
-    assertEquals(bookmarkId, 3L);
+    bookmarkService.deleteOne(3L);
   }
 
   @Test
@@ -55,8 +54,8 @@ class BookmarkServiceTest {
     bookmark2.setPostId(1L);
 
     //when
-    bookmarkService.doBookmark(bookmark1);
-    IllegalStateException e = assertThrows(IllegalStateException.class, () -> bookmarkService.doBookmark(bookmark2));
+    bookmarkService.saveOne(bookmark1);
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> bookmarkService.saveOne(bookmark2));
     
     //then
     assertThat(e.getMessage()).isEqualTo("이미 북마크에 등록된 게시물입니다.");

@@ -1,4 +1,4 @@
-package com.release.core.bookmark.domain;
+package com.release.core.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
