@@ -1,8 +1,6 @@
 package com.release.core.controller;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,54 +19,55 @@ import com.release.core.service.PostService;
 public class BookmarkController {
   
   private final BookmarkService bookmarkService;
+  private final PostService postService;
 
   @Autowired
-  public BookmarkController(BookmarkService bookmarkService) {
+  public BookmarkController(BookmarkService bookmarkService, PostService postService) {
     this.bookmarkService = bookmarkService;
+    this.postService = postService;
   }
 
-  // 북마크 등록
+  // 북마크 등록: Complete
   // 해당 포스트 내에서 실행
-  // postService 완성 이후에 구현
   @PostMapping("bookmark-save")
   public String saveBookmark(Long postId, @SessionAttribute("userid") Long userid) {
-    Bookmark bookmark = new Bookmark();
-    bookmark.setUserId(userid);
-    bookmark.setPostId(postId);
+    Optional<Post> post = postService.findOne(postId);
     
-    bookmarkService.saveOne(bookmark);
+    if(post.isPresent()) {
+      Bookmark bookmark = new Bookmark();
+      bookmark.setUserId(userid);
+      bookmark.setPostId(postId);
+      
+      bookmarkService.saveOne(bookmark);
 
-    return "redirect:/";
+      return "redirect:/";
+    }
+    else {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "해당 게시물이 존재하지 않습니다.");
+    }
   }
 
-  // 북마크 조회
+  // 북마크 조회: Complete
   // 마이페이지에 접속했을 때 실행
-  // postService 완성 이후에 구현
   @GetMapping("bookmark-load")
-  public String loadBookmark(@SessionAttribute("userid") Long userid) {
+  public List<Post> loadBookmark(@SessionAttribute("userid") Long userid) {
     List<Bookmark> bookmarkList = bookmarkService.findAll(userid);
+    ArrayList<Post> postList = new ArrayList<Post>();
 
-    List<Post> postList;
-    for(int i=0;i<bookmarkList.size();i++){
-      Long postId = bookmarkList.get(i).getPostId();
+    for(Bookmark bookmarkIndex : bookmarkList) {
+      Long postId = bookmarkIndex.getPostId();
+      Optional<Post> post = postService.findOne(postId);
       
-      Post post = new Post();
-      PostService postService;
-      post = postService.findOne(postId);
-
+      if(post.isPresent()) {
+        postList.add(post.get());
+      }
+      else {
+        Long bookmarkId = bookmarkIndex.getBookmarkId();
+        bookmarkService.deleteOne(bookmarkId);
+      }
     }
 
-    /*
-     * return JSON {
-      * "posts": [
-        *  Long PostId
-        *  string PostTitle
-        *  string postUserName
-        *  string postDate
-      * ]
-     * }
-     */
-    return "user/userList";
+    return postList;
   }
 
   // 북마크 삭제: Complete

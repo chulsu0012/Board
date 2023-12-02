@@ -12,7 +12,7 @@ import com.release.core.repository.JPAPostRepository;
 import com.release.core.repository.JPAPostTagsConnectionRepository;
 import com.release.core.repository.JPATagRepository;
 import com.release.core.repository.JPAUserRepository;
-import com.release.core.repository.JpaBookmarkRepository;
+import com.release.core.repository.JPABookmarkRepository;
 import com.release.core.repository.PostRepository;
 import com.release.core.repository.PostTagsConnectionRepository;
 import com.release.core.repository.TagRepository;
@@ -79,7 +79,7 @@ public class AppConfig{
 
     @Bean
     public BookmarkRepository bookmarkRepository() {
-      return new JpaBookmarkRepository(em);
+      return new JPABookmarkRepository(em);
     }
 
 }

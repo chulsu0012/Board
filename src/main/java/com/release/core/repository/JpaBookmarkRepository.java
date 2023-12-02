@@ -7,11 +7,11 @@ import com.release.core.domain.Bookmark;
 
 import jakarta.persistence.EntityManager;
 
-public class JpaBookmarkRepository implements BookmarkRepository {
+public class JPABookmarkRepository implements BookmarkRepository {
 
     private final EntityManager em;
 
-    public JpaBookmarkRepository(EntityManager em) {
+    public JPABookmarkRepository(EntityManager em) {
         this.em = em;
     }
 
