@@ -1,6 +1,9 @@
 package com.release.core.controller;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +33,7 @@ public class BookmarkController {
   // 북마크 등록: Complete
   // 해당 포스트 내에서 실행
   @PostMapping("bookmark-save")
-  public String saveBookmark(Long postId, @SessionAttribute("userid") Long userid) {
+  public String saveBookmark(Long postId, @SessionAttribute(name="userid", required=false) Long userid) {
     Optional<Post> post = postService.findOne(postId);
     
     if(post.isPresent()) {
@@ -50,7 +53,7 @@ public class BookmarkController {
   // 북마크 조회: Complete
   // 마이페이지에 접속했을 때 실행
   @GetMapping("bookmark-load")
-  public List<Post> loadBookmark(@SessionAttribute("userid") Long userid) {
+  public List<Post> loadBookmark(@SessionAttribute(name="userid", required=false) Long userid) {
     List<Bookmark> bookmarkList = bookmarkService.findAll(userid);
     ArrayList<Post> postList = new ArrayList<Post>();
 
@@ -74,7 +77,7 @@ public class BookmarkController {
   // 1. 해당 포스트 내에서 실행
   // 2. 마이페이지에 접속했을 때 실행
   @PostMapping("bookmark-delete")
-  public String deleteBookmark(Long bookmarkId, @SessionAttribute("userid") Long userid) {
+  public String deleteBookmark(Long bookmarkId, @SessionAttribute(name="userid", required=false) Long userid) {
     Optional<Bookmark> bookmark = bookmarkService.findOne(bookmarkId);
 
     if(bookmark.isPresent()) {
