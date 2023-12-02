@@ -54,8 +54,8 @@ public class PostServiceTest {
         post2.setWriterUserId(1L);
         postRepository.save(post2);
 
-        // Assertions.assertEquals(postService.findAll(0, num).size(), 2);
-        // Assertions.assertEquals(postService.findAll().size(), 2);
+        Assertions.assertEquals(postService.findAll(0, num).size(), 2);
+        Assertions.assertEquals(postService.findAll().size(), 2);
 
         Post post3 = new Post();
         post3.setPostTitle("테스트 제목3");
@@ -73,8 +73,8 @@ public class PostServiceTest {
         post4.setWriterUserId(1L);
         postRepository.save(post4);
 
-        // Assertions.assertEquals(postService.findAll(0, num).size(), num);
-        // Assertions.assertEquals(postService.findAll().size(), 4);
+        Assertions.assertEquals(postService.findAll(0, num).size(), num);
+        Assertions.assertEquals(postService.findAll().size(), 4);
     }
 
     @Test
