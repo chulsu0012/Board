@@ -7,9 +7,11 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,7 +35,8 @@ public class BookmarkController {
   // 북마크 등록: Complete
   // 해당 포스트 내에서 실행
   @PostMapping("bookmark-save")
-  public String saveBookmark(Long postId, @SessionAttribute(name="userid", required=false) Long userid) {
+  @ResponseBody
+  public ResponseEntity<String> saveBookmark(Long postId, @SessionAttribute(name="userid") Long userid) {
     Optional<Post> post = postService.findOne(postId);
     
     if(post.isPresent()) {
@@ -43,7 +46,7 @@ public class BookmarkController {
       
       bookmarkService.saveOne(bookmark);
 
-      return "redirect:/";
+      return new ResponseEntity<>("북마크를 등록했습니다.", HttpStatus.OK);
     }
     else {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "해당 게시물이 존재하지 않습니다.");
@@ -53,9 +56,10 @@ public class BookmarkController {
   // 북마크 조회: Complete
   // 마이페이지에 접속했을 때 실행
   @GetMapping("bookmark-load")
-  public List<Post> loadBookmark(@SessionAttribute(name="userid", required=false) Long userid) {
+  @ResponseBody
+  public List<Post> loadBookmark(@SessionAttribute(name="userid") Long userid) {
     List<Bookmark> bookmarkList = bookmarkService.findAll(userid);
-    ArrayList<Post> postList = new ArrayList<Post>();
+    List<Post> postList = new ArrayList<>();
 
     for(Bookmark bookmarkIndex : bookmarkList) {
       Long postId = bookmarkIndex.getPostId();
@@ -77,13 +81,14 @@ public class BookmarkController {
   // 1. 해당 포스트 내에서 실행
   // 2. 마이페이지에 접속했을 때 실행
   @PostMapping("bookmark-delete")
-  public String deleteBookmark(Long bookmarkId, @SessionAttribute(name="userid", required=false) Long userid) {
+  @ResponseBody
+  public ResponseEntity<String> deleteBookmark(Long bookmarkId, @SessionAttribute(name="userid") Long userid) {
     Optional<Bookmark> bookmark = bookmarkService.findOne(bookmarkId);
 
     if(bookmark.isPresent()) {
       if(Objects.equals(bookmark.get().getUserId(), userid)) {
         bookmarkService.deleteOne(bookmarkId);
-        return "redirect:/";
+        return new ResponseEntity<>("북마크를 삭제했습니다.", HttpStatus.OK);
       }
       else {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "북마크를 삭제할 수 없습니다.");

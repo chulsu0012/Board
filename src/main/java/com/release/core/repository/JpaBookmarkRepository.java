@@ -43,7 +43,7 @@ public class JPABookmarkRepository implements BookmarkRepository {
 
     @Override
     public List<Bookmark> findAllBookmarks(Long userId) {
-        return em.createQuery("select * from Bookmark b where b.userId = :userId",
+        return em.createQuery("select b from Bookmark b where b.userId = :userId",
             Bookmark.class).setParameter("userId", userId)
             .getResultList();
     }
