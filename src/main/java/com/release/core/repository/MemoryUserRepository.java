@@ -34,6 +34,26 @@ public class MemoryUserRepository implements UserRepository{
         return new ArrayList<>(store.values());
     }
 
+    @Override
+    public void deleteUser(User user) {
+        return;
+    }
+
+    @Override
+    public User updateUser(User user) {
+        return user;
+    }
+
+    @Override
+    public List<User> findAdminUsers() {
+        return new ArrayList<>(store.values());
+    }
+
+    @Override
+    public List<User> findUsersWithPagination(int page, int pageSize) {
+        return new ArrayList<>(store.values());
+    }
+
     public void clearStore(){
         store.clear();
     }

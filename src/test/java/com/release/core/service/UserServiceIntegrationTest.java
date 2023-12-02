@@ -52,7 +52,7 @@ public class UserServiceIntegrationTest {
         user2.setUserRegisterDate("202311012");
 //When
         userService.join(user1);
-        // userService.join(user2);
+        //userService.join(user2);
         IllegalStateException e = assertThrows(IllegalStateException.class,
                 () -> userService.join(user2));//예외가 발생해야 한다.
         assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");

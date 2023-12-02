@@ -1,16 +1,20 @@
 package com.release.core.domain;
 
+import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
+import lombok.ToString;
 
-@Getter
+@Data
+@ToString
+@Entity
+@Table(name="CATEGORYTABLE")
 public class Category {
 
-    private int id;
-    private String name;
+    @Column(name="CATEGORYID") @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long categoryId;
 
-    public Category(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+    @Column(name="CATEGORYNAME")
+    private String categoryName;
 
 }

@@ -1,15 +1,22 @@
 package com.release.core.domain;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.ToString;
+
+@Data
+@ToString
+@Entity
+@Table(name="TAGTABLE")
 public class Tag {
 
-    private int id;
-    private String name;
-    private Category parent;
+    @Column(name="TAGID") @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long tagId;
 
-    public Tag(int id, String name, Category parent) {
-        this.id = id;
-        this.name = name;
-        this.parent = parent;
-    }
+    @Column(name="TAGNAME")
+    private String tagName;
+
+    @Column(name="CATEGORYID")
+    private Long tagParentId;
 
 }

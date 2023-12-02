@@ -39,7 +39,6 @@ public class BookmarkService {
     
     //전체 조회
     public List<Bookmark> findAll(Long userId) {
-        // userId: SESSION
         return bookmarkRepository.findAllBookmarks(userId);
     }
 

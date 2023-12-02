@@ -10,9 +10,15 @@ public interface PostRepository {
 
     Post save(Post post);
 
+
     Optional<Post> findById(Long postId);
 
-    List<Post> findByWriterUserId(Long writerUserId);
+    List<Post> findByWriterUserId(Long writerUserId, int start);
 
-    //List<Post> searchPosts(int num);
+    List<Post> findByTripDays(Long tripDays, int start);
+
+    List<Post> getAllPosts(int start);
+
+    List<Post> findByPostDate(String postData, int start);
+    boolean delete(Long postId);
 }

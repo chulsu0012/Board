@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public class JPAPostRepository implements PostRepository {
 
+    private static final int PAGE_POST_NUM = 30;
+
     private final EntityManager em;
 
     public JPAPostRepository(EntityManager em) {
@@ -17,8 +19,9 @@ public class JPAPostRepository implements PostRepository {
     @Override
     public Post save(Post post) {
         em.persist(post);
-        return null;
+        return post;
     }
+
 
     @Override
     public Optional<Post> findById(Long postId) {
@@ -27,9 +30,48 @@ public class JPAPostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findByWriterUserId(Long writerUserId) {
+    public List<Post> findByWriterUserId(Long writerUserId, int start) {
         return em.createQuery("select p from Post p where p.writerUserId=:userId", Post.class)
                 .setParameter("userId", writerUserId)
+                .setFirstResult(PAGE_POST_NUM * start)
+                .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
+    }
+
+    @Override
+    public List<Post> findByTripDays(Long tripDays, int start) {
+        return em.createQuery("select p from Post p where p.postTripDays=:trip_days", Post.class)
+                .setParameter("trip_days", tripDays)
+                .setFirstResult(PAGE_POST_NUM * start)
+                .setMaxResults(PAGE_POST_NUM)
+                .getResultList();
+    }
+
+    @Override
+    public List<Post> getAllPosts(int start) {
+        return em.createQuery("select p from Post p", Post.class)
+                .setFirstResult(PAGE_POST_NUM * start)
+                .setMaxResults(PAGE_POST_NUM)
+                .getResultList();
+    }
+
+    @Override
+    public List<Post> findByPostDate(String postData, int start) {
+        return em.createQuery("select p from Post p where p.postDate=:post_date", Post.class)
+                .setParameter("post_date", postData)
+                .setFirstResult(PAGE_POST_NUM * start)
+                .setMaxResults(PAGE_POST_NUM)
+                .getResultList();
+    }
+
+    @Override
+    public boolean delete(Long postId) {
+        Optional<Post> post = findById(postId);
+        if(post.isPresent()) {
+            em.remove(post.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 }

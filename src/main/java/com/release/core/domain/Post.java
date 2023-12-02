@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @ToString
@@ -31,5 +32,8 @@ public class Post {
 
     @Column(name="WRITERUSERID")
     private Long writerUserId;
+
+    @Transient
+    private List<Long> tagIdList;
 
 }

@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttribute;
@@ -16,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.release.core.domain.Bookmark;
 import com.release.core.domain.Post;
 import com.release.core.service.BookmarkService;
+import com.release.core.service.PostService;
 
 @Controller
 public class BookmarkController {
@@ -50,6 +50,12 @@ public class BookmarkController {
 
     List<Post> postList;
     for(int i=0;i<bookmarkList.size();i++){
+      Long postId = bookmarkList.get(i).getPostId();
+      
+      Post post = new Post();
+      PostService postService;
+      post = postService.findOne(postId);
+
     }
 
     /*
