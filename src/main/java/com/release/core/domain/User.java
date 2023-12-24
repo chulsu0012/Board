@@ -20,14 +20,21 @@ public class User implements UserDetails {    // UserDetails를 상속받아 인
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "userId", updatable = false)
     private Long id;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "userEmail", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "userPassword")
     private String password;
+
+    @Column(name = "userRegisterDate")
+    private String userRegisterDate;
+
 
     @Builder
     public User(String email, String password, String auth) {
