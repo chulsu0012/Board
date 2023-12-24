@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.release.core.domain.Bookmark;
 import com.release.core.domain.Post;
+import com.release.core.dto.BookmarkFormDTO;
 import com.release.core.service.BookmarkService;
 import com.release.core.service.PostService;
 
@@ -33,23 +34,24 @@ public class BookmarkController {
   }
 
   // 북마크 등록: Complete
+  // DTO 적용
   // 해당 포스트 내에서 실행
   @PostMapping("bookmark-save")
   @ResponseBody
-  public ResponseEntity<String> saveBookmark(Long postId, @SessionAttribute(name="userid") Long userid) {
-    Optional<Post> post = postService.findOne(postId);
+  public Bookmark saveBookmark(@SessionAttribute(name="userId") Long userId, BookmarkFormDTO form) {
+    Optional<Post> post = postService.findOne(form.getPostId());
     
     if(post.isPresent()) {
       Bookmark bookmark = new Bookmark();
-      bookmark.setUserId(userid);
-      bookmark.setPostId(postId);
+      bookmark.setUserId(form.getUserId());
+      bookmark.setPostId(form.getPostId());
       
       bookmarkService.saveOne(bookmark);
 
-      return new ResponseEntity<>("북마크를 등록했습니다.", HttpStatus.OK);
+      return bookmark;
     }
     else {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "해당 게시물이 존재하지 않습니다.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 게시물이 존재하지 않습니다.");
     }
   }
 
@@ -57,8 +59,8 @@ public class BookmarkController {
   // 마이페이지에 접속했을 때 실행
   @GetMapping("bookmark-load")
   @ResponseBody
-  public List<Post> loadBookmark(@SessionAttribute(name="userid") Long userid) {
-    List<Bookmark> bookmarkList = bookmarkService.findAll(userid);
+  public List<Post> loadBookmark(@SessionAttribute(name="userId") Long userId) {
+    List<Bookmark> bookmarkList = bookmarkService.findAll(userId);
     List<Post> postList = new ArrayList<>();
 
     for(Bookmark bookmarkIndex : bookmarkList) {
@@ -78,15 +80,15 @@ public class BookmarkController {
   }
 
   // 북마크 삭제: Complete
-  // 1. 해당 포스트 내에서 실행
-  // 2. 마이페이지에 접속했을 때 실행
+  // 1. 해당 포스트 내에서 실행(X)
+  // 2. 마이페이지에 접속했을 때 실행(O)
   @PostMapping("bookmark-delete")
   @ResponseBody
-  public ResponseEntity<String> deleteBookmark(Long bookmarkId, @SessionAttribute(name="userid") Long userid) {
+  public ResponseEntity<String> deleteBookmark(@SessionAttribute(name="userId") Long userId, Long bookmarkId) {
     Optional<Bookmark> bookmark = bookmarkService.findOne(bookmarkId);
 
     if(bookmark.isPresent()) {
-      if(Objects.equals(bookmark.get().getUserId(), userid)) {
+      if(Objects.equals(bookmark.get().getUserId(), userId)) {
         bookmarkService.deleteOne(bookmarkId);
         return new ResponseEntity<>("북마크를 삭제했습니다.", HttpStatus.OK);
       }
