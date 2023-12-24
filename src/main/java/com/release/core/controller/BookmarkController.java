@@ -38,8 +38,8 @@ public class BookmarkController {
   // 해당 포스트 내에서 실행
   @PostMapping("bookmark-save")
   @ResponseBody
-  public Bookmark saveBookmark(@SessionAttribute(name="userId") Long userId, Long postId, BookmarkFormDTO form) {
-    Optional<Post> post = postService.findOne(postId);
+  public Bookmark saveBookmark(@SessionAttribute(name="userId") Long userId, BookmarkFormDTO form) {
+    Optional<Post> post = postService.findOne(form.getPostId());
     
     if(post.isPresent()) {
       Bookmark bookmark = new Bookmark();
