@@ -8,18 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface UserRepository{
+public interface UserRepository extends JpaRepository<User, Long> {
     User save(User user);
     Optional<User> findById(Long id);
-    Optional<User> findByName(String name);
+    Optional<User> findByEmail(String email);
     List<User> findAll();
-
-    void deleteUser(User user);
-
-    User updateUser(User user);
-
-    List<User> findAdminUsers();
-
-    List<User> findUsersWithPagination(int page, int pageSize);
-    // 필요한 추가적인 쿼리 메서드 정의
 }

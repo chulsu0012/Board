@@ -11,7 +11,6 @@ import com.release.core.repository.JPACategoryRepository;
 import com.release.core.repository.JPAPostRepository;
 import com.release.core.repository.JPAPostTagsConnectionRepository;
 import com.release.core.repository.JPATagRepository;
-import com.release.core.repository.JPAUserRepository;
 import com.release.core.repository.JPABookmarkRepository;
 import com.release.core.repository.PostRepository;
 import com.release.core.repository.PostTagsConnectionRepository;
@@ -19,8 +18,6 @@ import com.release.core.repository.TagRepository;
 import com.release.core.repository.UserRepository;
 import com.release.core.service.BookmarkService;
 import com.release.core.service.PostService;
-import com.release.core.service.UserService;
-import com.release.core.service.UserServiceImpl;
 
 import jakarta.persistence.EntityManager;
 
@@ -34,17 +31,6 @@ public class AppConfig{
     public AppConfig(DataSource dataSource, EntityManager em) {
         this.dataSource = dataSource;
         this.em = em;
-    }
-    // User
-    @Bean
-    public UserService userService() {
-        return new UserServiceImpl(userRepository());
-    }
-    @Bean
-    public UserRepository userRepository() {
-        //return new MemoryUserRepository();
-        //return new JdbcTemplateUserRepository(dataSource);
-        return new JPAUserRepository(em);
     }
 
 
