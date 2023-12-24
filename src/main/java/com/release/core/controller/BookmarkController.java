@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.release.core.domain.Bookmark;
 import com.release.core.domain.Post;
+import com.release.core.dto.BookmarkFormDTO;
 import com.release.core.service.BookmarkService;
 import com.release.core.service.PostService;
 
@@ -33,23 +34,24 @@ public class BookmarkController {
   }
 
   // 북마크 등록: Complete
+  // DTO 적용
   // 해당 포스트 내에서 실행
   @PostMapping("bookmark-save")
   @ResponseBody
-  public ResponseEntity<String> saveBookmark(Long postId, @SessionAttribute(name="userId") Long userId) {
+  public Bookmark saveBookmark(@SessionAttribute(name="userId") Long userId, Long postId, BookmarkFormDTO form) {
     Optional<Post> post = postService.findOne(postId);
     
     if(post.isPresent()) {
       Bookmark bookmark = new Bookmark();
-      bookmark.setUserId(userId);
-      bookmark.setPostId(postId);
+      bookmark.setUserId(form.getUserId());
+      bookmark.setPostId(form.getPostId());
       
       bookmarkService.saveOne(bookmark);
 
-      return new ResponseEntity<>("북마크를 등록했습니다.", HttpStatus.OK);
+      return bookmark;
     }
     else {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "해당 게시물이 존재하지 않습니다.");
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 게시물이 존재하지 않습니다.");
     }
   }
 
@@ -82,7 +84,7 @@ public class BookmarkController {
   // 2. 마이페이지에 접속했을 때 실행
   @PostMapping("bookmark-delete")
   @ResponseBody
-  public ResponseEntity<String> deleteBookmark(Long bookmarkId, @SessionAttribute(name="userId") Long userId) {
+  public ResponseEntity<String> deleteBookmark(@SessionAttribute(name="userId") Long userId, Long bookmarkId) {
     Optional<Bookmark> bookmark = bookmarkService.findOne(bookmarkId);
 
     if(bookmark.isPresent()) {
