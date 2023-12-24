@@ -80,8 +80,8 @@ public class BookmarkController {
   }
 
   // 북마크 삭제: Complete
-  // 1. 해당 포스트 내에서 실행
-  // 2. 마이페이지에 접속했을 때 실행
+  // 1. 해당 포스트 내에서 실행(X)
+  // 2. 마이페이지에 접속했을 때 실행(O)
   @PostMapping("bookmark-delete")
   @ResponseBody
   public ResponseEntity<String> deleteBookmark(@SessionAttribute(name="userId") Long userId, Long bookmarkId) {
