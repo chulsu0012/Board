@@ -7,7 +7,6 @@
     <list default="true" id="06d9d7a5-34b3-4ca8-ac1a-b20cf6509ac0" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/.idea/intellij-javadocs-4.0.1.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/UserDetail.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/UserDetailService.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/header.html" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/myPageHeader.html" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/templates/printMessage.html" afterDir="false" />
@@ -26,11 +25,12 @@
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db/UserTable.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/UserTable.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/AppConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLoginSuccessHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLogoutSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLogoutSuccessHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/controller/PostController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/domain/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/domain/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserJoinRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserJoinRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserLoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserLoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/release/core/controller/UserControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/release/core/controller/UserControllerTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
