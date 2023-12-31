@@ -22,7 +22,7 @@ public class UserJoinRequest {
         return User.builder()
                 .userEmail(userEmail)
                 .userName(userName)
-                .userPassword(userPassword)
+                .userPassword(encodedPassword)
                 .userRegisterDate(LocalDateTime.now().toString())
                 .userRole(User.UserRole.USER)
                 .build();

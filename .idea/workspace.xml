@@ -6,11 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="06d9d7a5-34b3-4ca8-ac1a-b20cf6509ac0" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/.idea/intellij-javadocs-4.0.1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/UserDetail.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/header.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/myPageHeader.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/printMessage.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/users/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/users/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/fileHashes/fileHashes.bin" afterDir="false" />
@@ -26,10 +23,11 @@
       <change beforePath="$PROJECT_DIR$/db/UserTable.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/UserTable.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/AppConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLogoutSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLogoutSuccessHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/UserDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/UserDetail.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/controller/PostController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/controller/PostController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/domain/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/domain/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/controller/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserJoinRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserJoinRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserLoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserLoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/release/core/controller/UserControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/release/core/controller/UserControllerTest.java" afterDir="false" />
     </list>
@@ -42,6 +40,26 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="springboard" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">

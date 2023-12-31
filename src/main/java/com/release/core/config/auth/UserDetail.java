@@ -22,11 +22,11 @@ public class UserDetail implements UserDetails {
     // 계정이 가지고 있는 권한 목록 return
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(() -> {
+        Collection<GrantedAuthority> collections = new ArrayList<>();
+        collections.add(() -> {
             return user.getUserRole().toString();
         });
-        return collection;
+        return collections;
     }
 
     @Override

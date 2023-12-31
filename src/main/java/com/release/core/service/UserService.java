@@ -3,15 +3,20 @@ package com.release.core.service;
 import com.release.core.domain.User;
 import com.release.core.dto.UserDto;
 import com.release.core.dto.UserJoinRequest;
+import com.release.core.dto.UserLoginRequest;
 import com.release.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +54,33 @@ public class UserService {
     }
 
     public void join(UserJoinRequest req){
+        //String hashedPassword = encoder.encode(req.getUserPassword());
+        //User user = new User();
+        //user.setUserEmail(req.getUserEmail());
+        //user.setUserPassword(hashedPassword);
+        //user.setUserName(req.getUserName());
+        //userRepository.save(user);
         userRepository.save(req.toEntity(encoder.encode(req.getUserPassword())));
+    }
+
+    public User login(UserLoginRequest req){
+        Optional<User> userOptional = userRepository.findByUserEmail(req.getUserEmail());
+
+        if (userOptional.isPresent()) {
+            // Optional에서 User 객체를 가져옴
+            User user = userOptional.get();
+
+            if (encoder.matches(req.getUserPassword(), user.getUserPassword())) {
+                // 비밀번호가 일치하면 로그인 성공
+                return user;
+            } else {
+                // 비밀번호가 일치하지 않으면 로그인 실패
+                throw new UsernameNotFoundException("비밀번호가 일치하지 않습니다.\nPassword doesn't match.");
+            }
+        } else {
+            // 사용자 정보가 없을 경우 처리 (예: 사용자 없음 예외 처리)
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.\nUser is not found.");
+        }
     }
 
     public User myInfo(String userEmail){

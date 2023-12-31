@@ -5,6 +5,7 @@ import com.release.core.dto.UserDto;
 import com.release.core.dto.UserJoinRequest;
 import com.release.core.dto.UserLoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import com.release.core.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,11 @@ import org.springframework.validation.BindingResult;
 public class UserController {
     private final UserService userService;
 
+    @GetMapping("/home")
+    public String home() {
+        // 여기에서 home.html을 표시하도록 설정합니다.
+        return "home";
+    }
     // 회원가입
     @GetMapping("/join")
     public String joinPage(Model model) {
@@ -31,7 +37,8 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(@Valid @ModelAttribute UserJoinRequest req, BindingResult bindingResult, Model model) {
+    public String join(@Valid @ModelAttribute UserJoinRequest req,
+                       BindingResult bindingResult, Model model) {
 
         // Validation
         if (userService.joinValid(req, bindingResult).hasErrors()) {
@@ -39,7 +46,7 @@ public class UserController {
         }
 
         userService.join(req);
-        model.addAttribute("message", "회원가입에 성공했습니다!\n로그인 후 사용 가능합니다!");
+        model.addAttribute("message", "회원가입에 성공했습니다!\nJoin success\n로그인 후 사용 가능합니다!");
         model.addAttribute("nextUrl", "/users/login");
         return "printMessage";
     }
@@ -56,6 +63,49 @@ public class UserController {
 
         model.addAttribute("userLoginRequest", new UserLoginRequest());
         return "users/login";
+    }
+
+    @PostMapping("/login")
+    public String login(@Valid @ModelAttribute UserLoginRequest req,
+                        BindingResult bindingResult, HttpServletRequest httpServletRequest,
+                        Model model) {
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        User user = userService.login(req);
+
+        // 로그인 아이디나 비밀번호가 틀린 경우 global error return
+        if(user == null) {
+            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+        }
+
+        if(bindingResult.hasErrors()) {
+            return "login";
+        }
+        // 로그인 성공 => 세션 생성
+
+        // 세션을 생성하기 전에 기존의 세션 파기
+        httpServletRequest.getSession().invalidate();
+        HttpSession session = httpServletRequest.getSession(true);  // Session이 없으면 생성
+        // 세션에 userId를 넣어줌
+        session.setAttribute("userId", user.getUserId());
+        session.setMaxInactiveInterval(3600); // Session이 1시간동안 유지
+
+        return "redirect:/session-login";
+
+    }
+
+    // 로그아웃
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, Model model) {
+        model.addAttribute("loginType", "session-login");
+        model.addAttribute("pageName", "세션 로그인");
+
+        HttpSession session = request.getSession(false);  // Session이 없으면 null return
+        if(session != null) {
+            session.invalidate();
+        }
+        return "redirect:/session-login";
     }
 
     // 정보 수정
