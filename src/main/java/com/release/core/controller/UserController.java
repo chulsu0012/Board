@@ -27,7 +27,7 @@ public class UserController {
     @GetMapping("/home")
     public String home() {
         // 여기에서 home.html을 표시하도록 설정합니다.
-        return "home";
+        return "users/home";
     }
     // 회원가입
     @GetMapping("/join")
@@ -69,19 +69,28 @@ public class UserController {
     public String login(@Valid @ModelAttribute UserLoginRequest req,
                         BindingResult bindingResult, HttpServletRequest httpServletRequest,
                         Model model) {
-        model.addAttribute("loginType", "session-login");
-        model.addAttribute("pageName", "세션 로그인");
+        model.addAttribute("loginType", "login");
+        model.addAttribute("pageName", "로그인");
 
         User user = userService.login(req);
+
 
         // 로그인 아이디나 비밀번호가 틀린 경우 global error return
         if(user == null) {
             bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+        }else{
+            model.addAttribute("message", "로그인에 성공했습니다!\n login success msg");
+            model.addAttribute("nextUrl", "home");
+            return "printMessage";
         }
 
+
         if(bindingResult.hasErrors()) {
-            return "login";
+            model.addAttribute("message", "로그인 실패!\nlogin fail message");
+            model.addAttribute("nextUrl", "home");
+            return "printMessage";
         }
+
         // 로그인 성공 => 세션 생성
 
         // 세션을 생성하기 전에 기존의 세션 파기
@@ -91,21 +100,21 @@ public class UserController {
         session.setAttribute("userId", user.getUserId());
         session.setMaxInactiveInterval(3600); // Session이 1시간동안 유지
 
-        return "redirect:/session-login";
+        return "redirect:/home";
 
     }
 
     // 로그아웃
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, Model model) {
-        model.addAttribute("loginType", "session-login");
-        model.addAttribute("pageName", "세션 로그인");
+        model.addAttribute("loginType", "login");
+        model.addAttribute("pageName", "로그인");
 
         HttpSession session = request.getSession(false);  // Session이 없으면 null return
         if(session != null) {
             session.invalidate();
         }
-        return "redirect:/session-login";
+        return "redirect:/login";
     }
 
     // 정보 수정

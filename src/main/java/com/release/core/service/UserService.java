@@ -1,10 +1,12 @@
 package com.release.core.service;
 
+import com.release.core.config.auth.UserDetail;
 import com.release.core.domain.User;
 import com.release.core.dto.UserDto;
 import com.release.core.dto.UserJoinRequest;
 import com.release.core.dto.UserLoginRequest;
 import com.release.core.repository.UserRepository;
+import com.release.core.config.auth.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,17 +56,14 @@ public class UserService {
     }
 
     public void join(UserJoinRequest req){
-        //String hashedPassword = encoder.encode(req.getUserPassword());
-        //User user = new User();
-        //user.setUserEmail(req.getUserEmail());
-        //user.setUserPassword(hashedPassword);
-        //user.setUserName(req.getUserName());
-        //userRepository.save(user);
         userRepository.save(req.toEntity(encoder.encode(req.getUserPassword())));
     }
 
     public User login(UserLoginRequest req){
+
         Optional<User> userOptional = userRepository.findByUserEmail(req.getUserEmail());
+
+        UserDetails userDetails = loadUserByUsername(req.getUserEmail());
 
         if (userOptional.isPresent()) {
             // Optional에서 User 객체를 가져옴
