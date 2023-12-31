@@ -41,6 +41,9 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	// (3) 스프링 시큐리티를 테스트 하기 위한 의존성 추가
 	testImplementation 'org.springframework.security:spring-security-test'
+	// Validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'javax.servlet:javax.servlet-api:4.0.1'
 }
 
 tasks.named('test') {

@@ -1,26 +1,107 @@
 package com.release.core.service;
 
 import com.release.core.domain.User;
-import com.release.core.dto.AddUserRequestDTO;
+import com.release.core.dto.UserDto;
+import com.release.core.dto.UserJoinRequest;
 import com.release.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
-import java.util.List;
-import java.util.Optional;
-
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder encoder;
 
-    public Long save(AddUserRequestDTO dto) {
-        return userRepository.save(User.builder()
-                .email(dto.getEmail())
-                // (1) 패스워드 암호화
-                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-                .build()).getId();
+    // 회원가입 유효
+    public BindingResult joinValid(UserJoinRequest req, BindingResult bindingResult){
+        // userEmail
+        if(req.getUserEmail().isEmpty()){
+            bindingResult.addError(new FieldError("req", "userEmail", "이메일이 비어있습니다."));
+        }
+        else if(userRepository.existsByUserEmail(req.getUserEmail())){
+            bindingResult.addError(new FieldError("req", "userEmail", "아이디가 중복입니다."));
+        }
+
+        // userPassword
+        if(req.getUserPassword().isEmpty()){
+            bindingResult.addError(new FieldError("req", "userPassword", "비밀번호가 비어있습니다."));
+        }
+        if(!req.getUserPassword().equals(req.getUserPasswordCheck())){
+            bindingResult.addError(new FieldError("req", "passwordCheck", "비밀번호가 일치하지 않습니다."));
+        }
+
+        // userName
+        if(req.getUserName().isEmpty()){
+            bindingResult.addError(new FieldError("req", "userName", "이름이 비어있습니다."));
+        }
+        else if(userRepository.existsByUserName(req.getUserName())){
+            bindingResult.addError(new FieldError("req", "userName", "이름이 중복됩니다."));
+        }
+
+        return bindingResult;
+    }
+
+    public void join(UserJoinRequest req){
+        userRepository.save(req.toEntity(encoder.encode(req.getUserPassword())));
+    }
+
+    public User myInfo(String userEmail){
+        return userRepository.findByUserEmail(userEmail).get();
+    }
+
+    // 정보수정 유효
+    public BindingResult editValid(UserDto dto, BindingResult bindingResult, String userEmail){
+        // userPassword
+        User loginUser = userRepository.findByUserEmail(userEmail).get();
+
+        if(dto.getNewUserPassword().isEmpty()){
+            bindingResult.addError(new FieldError("dto", "nowUserPassword", "현재 비밀번호가 비어있습니다."));
+        }
+        else if(!encoder.matches(dto.getNowUserPassword(), loginUser.getUserPassword())){
+            bindingResult.addError(new FieldError("dto", "newUserPasswordCheck", "비밀번호가 일치하지 않습니다."));
+        }
+
+        // userName
+        if(dto.getUserName().isEmpty()){
+            bindingResult.addError(new FieldError("dto", "userName", "이름이 비어 있습니다."));
+        }
+        else if(!dto.getUserName().equals(loginUser.getUserName()) && userRepository.existsByUserName(dto.getUserName())){
+            bindingResult.addError(new FieldError("dto", "userName", "이름이 중복됩니다."));
+        }
+
+        return bindingResult;
+    }
+
+    @Transactional
+    public void edit(UserDto dto, String userEmail){
+        User loginUser = userRepository.findByUserEmail(userEmail).get();
+
+        if(dto.getNewUserPassword().equals("")){
+            loginUser.edit(loginUser.getUserPassword(), dto.getUserName());
+        }else {
+            loginUser.edit(encoder.encode(dto.getNewUserPassword()), dto.getUserName());
+        }
+    }
+
+    @Transactional
+    public Boolean delete(String userEmail, String nowUserPassword){
+        User loginUser = userRepository.findByUserEmail(userEmail).get();
+        if (encoder.matches(nowUserPassword, loginUser.getUserPassword())) {
+            userRepository.delete(loginUser);
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public Page<User> findAllByUserName(String keyword, PageRequest pageRequest){
+        return userRepository.findAllByUserNameContains(keyword, pageRequest);
     }
 }

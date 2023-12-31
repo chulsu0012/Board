@@ -1,16 +1,18 @@
 package com.release.core.repository;
 
 import com.release.core.domain.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User save(User user);
-    Optional<User> findById(Long id);
-    Optional<User> findByEmail(String email);
-    List<User> findAll();
+    Optional<User> findByUserEmail(String userEmail);
+    Page<User> findAllByUserNameContains(String userName, PageRequest pageRequest);
+    Boolean existsByUserEmail(String userEmail);
+    Boolean existsByUserName(String userName);
 }

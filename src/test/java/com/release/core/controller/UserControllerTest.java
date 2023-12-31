@@ -1,6 +1,5 @@
 package com.release.core.controller;
 
-import com.release.core.dto.AddUserRequestDTO;
 import com.release.core.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,8 +18,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
