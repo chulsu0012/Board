@@ -6,7 +6,9 @@ import com.release.core.dto.PostEditFormDTO;
 import com.release.core.dto.PostWriteFormDTO;
 import com.release.core.service.PostService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.apache.ibatis.annotations.Delete;
 import org.mybatis.logging.Logger;
 import org.mybatis.logging.LoggerFactory;
@@ -29,16 +31,18 @@ public class PostController {
     public PostController(PostService postService) {this.postService = postService;}
 
     @GetMapping("login-dev")
-    public ResponseEntity<String> home(HttpServletResponse response,
+    public ResponseEntity<String> home(HttpServletRequest request,
                                        @RequestParam("userId") Long userId) {
-        Cookie userIdCookie = new Cookie("userId", String.valueOf(userId));
-        response.addCookie(userIdCookie);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("userId", userId);
+
         return new ResponseEntity<>("Welcome user " + userId, HttpStatus.OK);
     }
 
     @GetMapping("post-search")
     @ResponseBody
-    public List<Post> postSearch(@CookieValue(name="userId", required = false) Long userId,
+    public List<Post> postSearch(@SessionAttribute(name="userId") Long userId,
                                  @RequestParam("tagId") List<Long> tagIdList,
                                  @RequestParam("page") Long page,
                                  @RequestParam("tripDays") Long tripDays) {
@@ -48,7 +52,7 @@ public class PostController {
     // 게시물 등록
     @PostMapping("post-write")
     @ResponseBody
-    public Post postWrite(@CookieValue(name="userId", required = false) Long userId,
+    public Post postWrite(@SessionAttribute(name="userId") Long userId,
                           PostWriteFormDTO form) {
         Post post = new Post();
         post.setPostTitle(form.getPostTitle());
@@ -63,8 +67,8 @@ public class PostController {
 
     @PutMapping("post-edit")
     @ResponseBody
-    public ResponseEntity<String> postEdit(@CookieValue(name="userId", required = false) Long userId,
-                          PostEditFormDTO form) {
+    public ResponseEntity<String> postEdit(@SessionAttribute(name="userId") Long userId,
+                                           PostEditFormDTO form) {
 
         Optional<Post> postOptional = postService.findOne(form.getPostId());
         if(postOptional.isPresent()) {
@@ -83,8 +87,8 @@ public class PostController {
     // 게시물 삭제
     @DeleteMapping("post-delete")
     @ResponseBody
-    public ResponseEntity<String> postDelete(@CookieValue(name="userId", required = false) Long userId,
-                            @RequestParam("postId") Long postId) {
+    public ResponseEntity<String> postDelete(@SessionAttribute(name="userId") Long userId,
+                                             @RequestParam("postId") Long postId) {
         Optional<Post> post = postService.findOne(postId);
         if(post.isPresent()) {
             if(Objects.equals(post.get().getWriterUserId(), userId)) {
