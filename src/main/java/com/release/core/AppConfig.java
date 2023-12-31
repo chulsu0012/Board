@@ -15,7 +15,6 @@ import com.release.core.repository.JPABookmarkRepository;
 import com.release.core.repository.PostRepository;
 import com.release.core.repository.PostTagsConnectionRepository;
 import com.release.core.repository.TagRepository;
-import com.release.core.repository.UserRepository;
 import com.release.core.service.BookmarkService;
 import com.release.core.service.PostService;
 
@@ -67,5 +66,8 @@ public class AppConfig{
     public BookmarkRepository bookmarkRepository() {
       return new JPABookmarkRepository(em);
     }
+
+
+
 
 }

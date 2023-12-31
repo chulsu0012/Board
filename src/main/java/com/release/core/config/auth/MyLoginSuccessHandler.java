@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @AllArgsConstructor
 public class MyLoginSuccessHandler implements AuthenticationSuccessHandler {
@@ -24,8 +25,16 @@ public class MyLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         User loginUser = userRepository.findByUserEmail(authentication.getName()).get();
 
-        // 홈 화면으로 redirect
-        response.sendRedirect("/");
+        // 성공 시 메세지 출력 후 홈 화면으로 redirect
+        response.setContentType("text/html");
+        PrintWriter pw = response.getWriter();
+        String prevPage = (String) request.getSession().getAttribute("prevPage");
+        if (prevPage != null) {
+            pw.println("<script>alert('" + loginUser.getUserName() + "님 반갑습니다!'); location.href='" + prevPage + "';</script>");
+        } else {
+            pw.println("<script>alert('" + loginUser.getUserName() + "님 반갑습니다!'); location.href='/';</script>");
+        }
+        pw.flush();
     }
 
 }

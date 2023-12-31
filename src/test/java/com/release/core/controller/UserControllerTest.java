@@ -1,113 +1,152 @@
 package com.release.core.controller;
 
+import com.release.core.domain.User;
+import com.release.core.dto.UserJoinRequest;
+import com.release.core.dto.UserLoginRequest;
+import com.release.core.repository.UserRepository;
 import com.release.core.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@SpringBootTest // 테스트용 애플리케이션 컨텍스트
-@AutoConfigureMockMvc   // MockMvc 생성
-class UserControllerTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
+public class UserControllerTest {
 
-    @InjectMocks
-    private UserController userController;
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @InjectMocks
     private UserService userService;
+
+    @Autowired
+    private UserController userController;
 
     private MockMvc mockMvc;
 
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     @BeforeEach
-    public void setup() {
-        // MockMvc를 설정하여 컨트롤러 테스트를 진행합니다.
-        MockitoAnnotations.openMocks(this);
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/views/");
-        viewResolver.setSuffix(".jsp");
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).setViewResolvers(viewResolver).build();
+    public void setUp() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .apply(SecurityMockMvcConfigurers.springSecurity()) // Spring Security 초기화
+                .build();
     }
 
-    @DisplayName("testLogin: 로그인에 성공한다")
     @Test
-    public void testlogin() throws Exception {
-        mockMvc.perform(get("/login"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("login"));
+    void join(){
+        // GIVEN
+        UserJoinRequest request = new UserJoinRequest();
+        request.setUserEmail("user@example.com");
+        request.setUserName("John Doe");
+        request.setUserPassword("password");
+        request.setUserPasswordCheck("password");
+
+        // Perform the join request
+        ResponseEntity<String> response = restTemplate.postForEntity("/join", request, String.class);
+
+        // Verify the response
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody()).contains("회원가입에 성공했습니다!");
+
+        // Verify that the user is saved in the database
+        Optional<User> userOptional = userRepository.findByUserEmail("user@example.com");
+        User savedUser = userOptional.orElse(null);
+        assertThat(savedUser).isNotNull();
+        assertThat(savedUser.getUserName()).isEqualTo("John Doe");
+
+        // Verify that the password is encoded
+        assertThat(passwordEncoder.matches("password", savedUser.getUserPassword())).isTrue();
+    }
+    @Test
+    public void login_success() throws Exception{
+        // GIVEN
+        UserJoinRequest request = new UserJoinRequest();
+        request.setUserEmail("user@example.com");
+        request.setUserName("John Doe");
+        request.setUserPassword("password");
+        request.setUserPasswordCheck("password");
+
+        // 회원가입을 먼저 수행
+        ResponseEntity<String> response = restTemplate.postForEntity("/join", request, String.class);
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+
+        // 로그인 시도
+        String userEmail = "user@example.com";
+        String userPassword = "password";
+
+        // 로그인 시도 후, 인증(Authenticated)이 되어야 함
+        ResultActions result = mockMvc.perform(post("/login")
+                        .param("userEmail", userEmail)
+                        .param("userPassword", userPassword))
+                .andExpect(status().is3xxRedirection()) // 로그인 후 리다이렉션 발생
+                .andExpect(redirectedUrl("/")); // 리다이렉션된 경로 확인
+
+// 로그인 후, SecurityContextHolder를 통해 인증 확인
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assertThat(authentication.isAuthenticated()).isTrue();
     }
 
-    @DisplayName("testSignupPage: 예상된 뷰가 응답되었다.")
     @Test
-    public void testSignupPage() throws Exception {
-        mockMvc.perform(get("/signup"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("signup"));
-    }
+    public void login_fail() throws Exception{
+        // 로그인 시도
+        String userEmail = "존재하지 않는 아이디";
+        String userPassword = "123";
 
-    @DisplayName("testSignup: 회원가입에 성공한다")
-    @Test
-    public void testSignup() throws Exception {
-        // 테스트 데이터 생성
-        AddUserRequestDTO requestDTO = new AddUserRequestDTO();
-        requestDTO.setEmail("testEmail");
-        requestDTO.setPassword("testPassword");
-
-        // userService의 save 메서드가 호출되었을 때의 동작 설정
-        doNothing().when(userService).save(requestDTO);
-
-        mockMvc.perform(post("/user")
-                        .param("username", "testUser")
-                        .param("password", "testPassword"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
-
-        // userService의 save 메서드가 정확히 한 번 호출되었는지 확인
-        verify(userService, times(1)).save(requestDTO);
-    }
-
-
-    @DisplayName("testLogout: 로그아웃에 성공한다")
-    @Test
-    public void testLogout() throws Exception {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        Authentication authentication = mock(Authentication.class);
-
-        // SecurityContextHolder에 가짜 SecurityContext 설정
-        when(SecurityContextHolder.getContext()).thenReturn(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-
-        // SecurityContextLogoutHandler의 logout 메서드 호출 시 동작 설정
-        doNothing().when(new SecurityContextLogoutHandler()).logout(request, response, authentication);
-
-        mockMvc.perform(get("/logout"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
-
-        // SecurityContextLogoutHandler의 logout 메서드가 호출되었는지 확인
-        verify(new SecurityContextLogoutHandler()).logout(request, response, authentication);
+        // 로그인 시도 후, 인증(Authenticated)이 실패해야 함
+        mockMvc.perform(formLogin("/login")
+                        .user(userEmail)
+                        .password(userPassword))
+                .andExpect(unauthenticated());
     }
 }

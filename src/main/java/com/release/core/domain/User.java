@@ -9,37 +9,39 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Table(name = "UserTable")
+@Table(name = "USERTABLE")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId", updatable = false)
+    @Column(name = "USERID", updatable = false)
     private Long userId;
-    @Column(name = "userEmail", nullable = false, unique = true)
+    @Column(name = "USEREMAIL", nullable = false, unique = true)
     private String userEmail;
 
-    @Column(name = "userName")
+    @Column(name = "USERNAME")
     private String userName;
 
-    @Column(name = "userPassword")
+    @Column(name = "USERPASSWORD")
     private String userPassword;
 
-    @Column(name = "userRegisterDate")
+    @Column(name = "USERREGISTERDATE")
     private String userRegisterDate;
 
-    @Column(name = "userIsAdmin")
-    private Integer userIsAdmin;
+    //@Column(name = "USERISADMIN")
+    //private Integer userIsAdmin;
 
     public enum UserRole {
         USER, ADMIN;
     }
 
+    @Column(name = "USERROLE")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 

@@ -5,6 +5,6 @@ create table UserTable(
     userName char(128) not null,
     userPassword char(128) not null,
     userRegisterDate char(128) not null,
-    userIsAdmin bigint not null,
+    userRole char(128) not null,
     primary key(userId)
 );
