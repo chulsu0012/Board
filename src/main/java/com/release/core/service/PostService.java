@@ -4,10 +4,7 @@ import com.release.core.domain.Post;
 import com.release.core.domain.PostTagsConnection;
 import com.release.core.domain.User;
 import com.release.core.dto.PostEditFormDTO;
-import com.release.core.repository.CategoryRepository;
-import com.release.core.repository.PostRepository;
-import com.release.core.repository.PostTagsConnectionRepository;
-import com.release.core.repository.TagRepository;
+import com.release.core.repository.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -26,15 +23,17 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostTagsConnectionRepository postTagsConnectionRepository;
     private final TagRepository tagRepository;
+    private final UserRepository userRepository;
 
     private final CategoryRepository categoryRepository;
 
 
-    public PostService(PostRepository postRepository, PostTagsConnectionRepository postTagsConnectionRepository, TagRepository tagRepository, CategoryRepository categoryRepository) {
+    public PostService(PostRepository postRepository, PostTagsConnectionRepository postTagsConnectionRepository, TagRepository tagRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.postTagsConnectionRepository = postTagsConnectionRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
+        this.userRepository = userRepository;
     }
 
     public static <T> List<T> getPartOfList(List<T> list, int start, int end) {
@@ -56,6 +55,22 @@ public class PostService {
         }
     }
 
+    public Post applyTransientData(Post post) {
+        Optional<User> optionalWriterUser = userRepository.findByUserId(post.getWriterUserId());
+        List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByPostId(post.getPostId());
+        ArrayList<Long> tagIdList = new ArrayList<>();
+        for(PostTagsConnection connection : connectionList) {
+            tagIdList.add(connection.getTagId());
+        }
+        post.setTagIdList(tagIdList);
+
+        if(optionalWriterUser.isPresent()) {
+            post.setWriterUserName(optionalWriterUser.get().getUserName());
+        }
+
+        return post;
+    }
+
     public Long write(Post post, List<Long> tagIdList) {
         boolean isValid = checkValidatePost(post);
         if(isValid) {
@@ -74,7 +89,7 @@ public class PostService {
     }
 
     public boolean editPost(Post post, PostEditFormDTO form) {
-        post = applyTagIdList(post);
+        post = applyTransientData(post);
         List<PostTagsConnection> oldPostTagsConnectionOptional = postTagsConnectionRepository.findByPostId(post.getPostId());
         for(PostTagsConnection connection : oldPostTagsConnectionOptional) {postTagsConnectionRepository.delete(connection.getConnectionId());}
 
@@ -172,26 +187,31 @@ public class PostService {
         }
     }
 
-    public Post applyTagIdList(Post post) {
-        List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByPostId(post.getPostId());
-        ArrayList<Long> tagIdList = new ArrayList<>();
-        for(PostTagsConnection connection : connectionList) {
-            tagIdList.add(connection.getTagId());
-        }
-        post.setTagIdList(tagIdList);
-        return post;
-    }
+
 
     public List<Post> search(List<Long> tagIdList, Long page, Long tripDays) {
-        List<Long> connectionList = postTagsConnectionRepository.search(tagIdList, page, tripDays);
+        List<Long> connectionList = new ArrayList<>();
         ArrayList<Post> postList = new ArrayList<>();
+
+        if(tagIdList!=null && tripDays!=null) {
+            connectionList = postTagsConnectionRepository.searchWithTagAndDays(tagIdList, page, tripDays);
+        } else if(tagIdList!=null && tripDays==null) {
+            connectionList = postTagsConnectionRepository.searchWithTag(tagIdList, page);
+        } else if(tagIdList==null && tripDays!=null) {
+            connectionList = postTagsConnectionRepository.searchWithDays(page, tripDays);
+        } else {
+            return postList;
+        }
+
         for(Long postId : connectionList) {
             Optional<Post> postOptional = postRepository.findById(postId);
             if(postOptional.isPresent()) {
-                postList.add(postOptional.get());
+                postList.add(applyTransientData(postOptional.get()));
             }
         }
         return postList;
     }
+
+
 
 }

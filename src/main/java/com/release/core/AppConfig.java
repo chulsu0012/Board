@@ -2,19 +2,10 @@ package com.release.core;
 
 import javax.sql.DataSource;
 
+import com.release.core.repository.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.release.core.repository.BookmarkRepository;
-import com.release.core.repository.CategoryRepository;
-import com.release.core.repository.JPACategoryRepository;
-import com.release.core.repository.JPAPostRepository;
-import com.release.core.repository.JPAPostTagsConnectionRepository;
-import com.release.core.repository.JPATagRepository;
-import com.release.core.repository.JPABookmarkRepository;
-import com.release.core.repository.PostRepository;
-import com.release.core.repository.PostTagsConnectionRepository;
-import com.release.core.repository.TagRepository;
 import com.release.core.service.BookmarkService;
 import com.release.core.service.PostService;
 
@@ -26,10 +17,13 @@ public class AppConfig{
     private final DataSource dataSource;
     private final EntityManager em;
 
+    private final UserRepository userRepository;
 
-    public AppConfig(DataSource dataSource, EntityManager em) {
+
+    public AppConfig(DataSource dataSource, EntityManager em, UserRepository userRepository) {
         this.dataSource = dataSource;
         this.em = em;
+        this.userRepository = userRepository;
     }
 
 
@@ -53,7 +47,7 @@ public class AppConfig{
     }
 
     @Bean
-    public PostService postService() {return new PostService(postRepository(), postTagsConnectionRepository(), tagRepository(), categoryRepository());}
+    public PostService postService() {return new PostService(postRepository(), postTagsConnectionRepository(), tagRepository(), categoryRepository(), userRepository);}
 
 
     // Bookmark

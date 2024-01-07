@@ -44,9 +44,9 @@ public class PostController {
     @GetMapping("post-search")
     @ResponseBody
     public List<Post> postSearch(@SessionAttribute(name="userId") Long userId,
-                                 @RequestParam("tagId") List<Long> tagIdList,
                                  @RequestParam("page") Long page,
-                                 @RequestParam("tripDays") Long tripDays) {
+                                 @RequestParam(value = "tagId", required = false) List<Long> tagIdList,
+                                 @RequestParam(value = "tripDays", required = false) Long tripDays) {
         return postService.search(tagIdList, page, tripDays);
     }
 
@@ -109,7 +109,7 @@ public class PostController {
     public Post postRead(@RequestParam("postId") Long postId) {
         Optional<Post> optionalPost = postService.findOne(postId);
         if(optionalPost.isPresent()) {
-            Post post = postService.applyTagIdList(optionalPost.get());
+            Post post = postService.applyTransientData(optionalPost.get());
             return post;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");

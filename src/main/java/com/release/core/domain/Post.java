@@ -36,4 +36,7 @@ public class Post {
     @Transient
     private List<Long> tagIdList;
 
+    @Transient
+    private String writerUserName;
+
 }

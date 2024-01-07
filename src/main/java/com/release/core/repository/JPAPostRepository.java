@@ -74,4 +74,9 @@ public class JPAPostRepository implements PostRepository {
             return false;
         }
     }
+
+    @Override
+    public List<Post> findByQuery(String query) {
+        return null;
+    }
 }

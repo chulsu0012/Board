@@ -18,7 +18,9 @@ public interface PostTagsConnectionRepository {
 
     Optional<PostTagsConnection> findByPostIdAndTagId(Long postId, Long tagId);
 
-    List<Long> search(List<Long> tagIdList, Long page, Long tripDays);
+    List<Long> searchWithTagAndDays(List<Long> tagIdList, Long page, Long tripDays);
+    List<Long> searchWithTag(List<Long> tagIdList, Long page);
+    List<Long> searchWithDays(Long page, Long tripDays);
 
     boolean delete(Long connectionId);
 }

@@ -63,7 +63,7 @@ public class UserService {
 
         Optional<User> userOptional = userRepository.findByUserEmail(req.getUserEmail());
 
-        UserDetails userDetails = loadUserByUsername(req.getUserEmail());
+        UserDetails userDetails = null; //loadUserByUsername(req.getUserEmail());
 
         if (userOptional.isPresent()) {
             // Optional에서 User 객체를 가져옴

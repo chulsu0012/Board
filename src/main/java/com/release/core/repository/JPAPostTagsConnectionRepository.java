@@ -65,7 +65,7 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
     }
 
     @Override
-    public List<Long> search(List<Long> tagIdList, Long page, Long tripDays) {
+    public List<Long> searchWithTagAndDays(List<Long> tagIdList, Long page, Long tripDays) {
         String tagIdListStr = "(" + tagIdList.get(0);
         for(Long tagId : tagIdList.stream().skip(1).toList()) {
             tagIdListStr += ",";
@@ -75,6 +75,31 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
 
         return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.tagId in :tagIdList and c.postId in (select p.postId from Post p where p.postTripDays=:tripDays)")
                 .setParameter("tagIdList", tagIdList)
+                .setParameter("tripDays", tripDays)
+                .setFirstResult(PAGE_POST_NUM * (int) (page-1))
+                .setMaxResults(PAGE_POST_NUM)
+                .getResultList();
+    }
+
+    @Override
+    public List<Long> searchWithTag(List<Long> tagIdList, Long page) {
+        String tagIdListStr = "(" + tagIdList.get(0);
+        for(Long tagId : tagIdList.stream().skip(1).toList()) {
+            tagIdListStr += ",";
+            tagIdListStr += tagId;
+        }
+        tagIdListStr += ")";
+
+        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.tagId in :tagIdList")
+                .setParameter("tagIdList", tagIdList)
+                .setFirstResult(PAGE_POST_NUM * (int) (page-1))
+                .setMaxResults(PAGE_POST_NUM)
+                .getResultList();
+    }
+
+    @Override
+    public List<Long> searchWithDays(Long page, Long tripDays) {
+        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.postId in (select p.postId from Post p where p.postTripDays=:tripDays)")
                 .setParameter("tripDays", tripDays)
                 .setFirstResult(PAGE_POST_NUM * (int) (page-1))
                 .setMaxResults(PAGE_POST_NUM)
