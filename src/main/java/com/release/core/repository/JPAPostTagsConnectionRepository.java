@@ -65,7 +65,7 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
     }
 
     @Override
-    public List<Long> searchWithTagAndDays(List<Long> tagIdList, Long page, Long tripDays) {
+    public List<Long> searchWithTagAndDays(List<Long> tagIdList, Long tripDays, int page) {
         String tagIdListStr = "(" + tagIdList.get(0);
         for(Long tagId : tagIdList.stream().skip(1).toList()) {
             tagIdListStr += ",";
@@ -73,7 +73,7 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
         }
         tagIdListStr += ")";
 
-        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.tagId in :tagIdList and c.postId in (select p.postId from Post p where p.postTripDays=:tripDays)")
+        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.tagId in :tagIdList and c.postId in (select p.postId from Post p where p.postTripDays=:tripDays)", Long.class)
                 .setParameter("tagIdList", tagIdList)
                 .setParameter("tripDays", tripDays)
                 .setFirstResult(PAGE_POST_NUM * (int) (page-1))
@@ -82,7 +82,7 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
     }
 
     @Override
-    public List<Long> searchWithTag(List<Long> tagIdList, Long page) {
+    public List<Long> searchWithTag(List<Long> tagIdList, int page) {
         String tagIdListStr = "(" + tagIdList.get(0);
         for(Long tagId : tagIdList.stream().skip(1).toList()) {
             tagIdListStr += ",";
@@ -90,18 +90,18 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
         }
         tagIdListStr += ")";
 
-        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.tagId in :tagIdList")
+        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.tagId in :tagIdList", Long.class)
                 .setParameter("tagIdList", tagIdList)
-                .setFirstResult(PAGE_POST_NUM * (int) (page-1))
+                .setFirstResult(PAGE_POST_NUM * (page-1))
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
 
     @Override
-    public List<Long> searchWithDays(Long page, Long tripDays) {
-        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.postId in (select p.postId from Post p where p.postTripDays=:tripDays)")
+    public List<Long> searchWithDays(Long tripDays, int page) {
+        return em.createQuery("SELECT DISTINCT(c.postId) FROM PostTagsConnection c where c.postId in (select p.postId from Post p where p.postTripDays=:tripDays)", Long.class)
                 .setParameter("tripDays", tripDays)
-                .setFirstResult(PAGE_POST_NUM * (int) (page-1))
+                .setFirstResult(PAGE_POST_NUM * (page-1))
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }

@@ -57,16 +57,16 @@ public class PostService {
 
     public Post applyTransientData(Post post) {
         Optional<User> optionalWriterUser = userRepository.findByUserId(post.getWriterUserId());
+        if(optionalWriterUser.isPresent()) {
+            post.setWriterUserName(optionalWriterUser.get().getUserName());
+        }
+
         List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByPostId(post.getPostId());
         ArrayList<Long> tagIdList = new ArrayList<>();
         for(PostTagsConnection connection : connectionList) {
             tagIdList.add(connection.getTagId());
         }
         post.setTagIdList(tagIdList);
-
-        if(optionalWriterUser.isPresent()) {
-            post.setWriterUserName(optionalWriterUser.get().getUserName());
-        }
 
         return post;
     }
@@ -189,16 +189,16 @@ public class PostService {
 
 
 
-    public List<Post> search(List<Long> tagIdList, Long page, Long tripDays) {
+    public List<Post> search(List<Long> tagIdList, int page, Long tripDays) {
         List<Long> connectionList = new ArrayList<>();
         ArrayList<Post> postList = new ArrayList<>();
 
         if(tagIdList!=null && tripDays!=null) {
-            connectionList = postTagsConnectionRepository.searchWithTagAndDays(tagIdList, page, tripDays);
+            connectionList = postTagsConnectionRepository.searchWithTagAndDays(tagIdList, tripDays, page);
         } else if(tagIdList!=null && tripDays==null) {
             connectionList = postTagsConnectionRepository.searchWithTag(tagIdList, page);
         } else if(tagIdList==null && tripDays!=null) {
-            connectionList = postTagsConnectionRepository.searchWithDays(page, tripDays);
+            connectionList = postTagsConnectionRepository.searchWithDays(tripDays, page);
         } else {
             return postList;
         }
@@ -208,6 +208,16 @@ public class PostService {
             if(postOptional.isPresent()) {
                 postList.add(applyTransientData(postOptional.get()));
             }
+        }
+        return postList;
+    }
+
+    public List<Post> searchWithQuery(String query, int page) {
+        List<Post> searchedPostList = postRepository.findByQuery(query, page);
+        System.out.println("Length of searched post : " + searchedPostList.size() );
+        ArrayList<Post> postList = new ArrayList<>();
+        for(Post post : searchedPostList) {
+            postList.add(applyTransientData(post));
         }
         return postList;
     }

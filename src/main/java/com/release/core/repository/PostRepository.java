@@ -21,7 +21,7 @@ public interface PostRepository {
 
     List<Post> findByPostDate(String postData, int start);
 
-    List<Post> findByQuery(String query);
+    List<Post> findByQuery(String query, int start);
 
 
     boolean delete(Long postId);

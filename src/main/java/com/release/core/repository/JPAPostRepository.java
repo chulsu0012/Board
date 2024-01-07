@@ -76,7 +76,13 @@ public class JPAPostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findByQuery(String query) {
-        return null;
+    public List<Post> findByQuery(String query, int start) {
+        String queryForJPQL = query; //"%" + query.replaceAll(" ", "%") + "%";
+
+        return em.createQuery("select p from Post p where p.postTitle like concat('%', :query, '%') or p.postContent like concat('%', :query, '%')", Post.class)
+                .setParameter("query", queryForJPQL)
+                .setFirstResult(PAGE_POST_NUM * start)
+                .setMaxResults(PAGE_POST_NUM)
+                .getResultList();
     }
 }

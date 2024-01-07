@@ -43,11 +43,17 @@ public class PostController {
 
     @GetMapping("post-search")
     @ResponseBody
-    public List<Post> postSearch(@SessionAttribute(name="userId") Long userId,
-                                 @RequestParam("page") Long page,
+    public List<Post> postSearch(@RequestParam("page") int page,
                                  @RequestParam(value = "tagId", required = false) List<Long> tagIdList,
                                  @RequestParam(value = "tripDays", required = false) Long tripDays) {
         return postService.search(tagIdList, page, tripDays);
+    }
+
+    @GetMapping("post-search-with-query")
+    @ResponseBody
+    public List<Post> postSearchWithQuery(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                          @RequestParam("query") String query) {
+        return postService.searchWithQuery(query, page);
     }
 
     // 게시물 등록
