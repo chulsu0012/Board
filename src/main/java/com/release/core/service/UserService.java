@@ -71,11 +71,6 @@ public class UserService {
 
         Optional<User> userOptional = userRepository.findByUserEmail(req.getUserEmail());
 
-<<<<<<< Updated upstream
-        UserDetails userDetails = null; //loadUserByUsername(req.getUserEmail());
-
-=======
->>>>>>> Stashed changes
         if (userOptional.isPresent()) {
             // Optional에서 User 객체를 가져옴
             User user = userOptional.get();
