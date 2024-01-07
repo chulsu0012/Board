@@ -18,11 +18,11 @@ public class UserJoinRequest {
     private String userPasswordCheck;
 
 
-    public User toEntity(String encodedPassword){
+    public User toEntity(String userPassword){
         return User.builder()
                 .userEmail(userEmail)
                 .userName(userName)
-                .userPassword(encodedPassword)
+                .userPassword(userPassword)
                 .userRegisterDate(LocalDateTime.now().toString())
                 .userRole(User.UserRole.USER)
                 .build();

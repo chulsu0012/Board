@@ -10,6 +10,9 @@ import com.release.core.config.auth.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+
+    private final UserDetailService userDetailService;
+
     private final BCryptPasswordEncoder encoder;
 
     // 회원가입 유효
@@ -56,21 +62,31 @@ public class UserService {
     }
 
     public void join(UserJoinRequest req){
-        userRepository.save(req.toEntity(encoder.encode(req.getUserPassword())));
+        //userRepository.save(req.toEntity(encoder.encode(req.getUserPassword())));
+        userRepository.save(req.toEntity(req.getUserPassword()));
+
     }
 
     public User login(UserLoginRequest req){
 
         Optional<User> userOptional = userRepository.findByUserEmail(req.getUserEmail());
 
+<<<<<<< Updated upstream
         UserDetails userDetails = null; //loadUserByUsername(req.getUserEmail());
 
+=======
+>>>>>>> Stashed changes
         if (userOptional.isPresent()) {
             // Optional에서 User 객체를 가져옴
             User user = userOptional.get();
 
             if (encoder.matches(req.getUserPassword(), user.getUserPassword())) {
-                // 비밀번호가 일치하면 로그인 성공
+                // Spring Security 컨텍스트에 인증 정보를 저장
+                UserDetails userDetails = userDetailService.loadUserByUsername(req.getUserEmail());
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
                 return user;
             } else {
                 // 비밀번호가 일치하지 않으면 로그인 실패

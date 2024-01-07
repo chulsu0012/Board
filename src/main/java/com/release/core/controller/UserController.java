@@ -65,6 +65,7 @@ public class UserController {
         return "users/login";
     }
 
+
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute UserLoginRequest req,
                         BindingResult bindingResult, HttpServletRequest httpServletRequest,
@@ -74,18 +75,17 @@ public class UserController {
 
         User user = userService.login(req);
 
-
         // 로그인 아이디나 비밀번호가 틀린 경우 global error return
-        if(user == null) {
+        if (user == null) {
             bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
-        }else{
+        } else {
             model.addAttribute("message", "로그인에 성공했습니다!\n login success msg");
             model.addAttribute("nextUrl", "home");
             return "printMessage";
         }
 
 
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             model.addAttribute("message", "로그인 실패!\nlogin fail message");
             model.addAttribute("nextUrl", "home");
             return "printMessage";
@@ -101,7 +101,6 @@ public class UserController {
         session.setMaxInactiveInterval(3600); // Session이 1시간동안 유지
 
         return "redirect:/home";
-
     }
 
     // 로그아웃
