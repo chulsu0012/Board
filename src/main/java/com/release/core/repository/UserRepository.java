@@ -11,11 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-<<<<<<< Updated upstream
+
     Optional<User> findByUserId(Long userId);
-=======
-    User findByUserId(Long userId);
->>>>>>> Stashed changes
     Optional<User> findByUserEmail(String userEmail);
     Page<User> findAllByUserNameContains(String userName, PageRequest pageRequest);
     Boolean existsByUserEmail(String userEmail);
