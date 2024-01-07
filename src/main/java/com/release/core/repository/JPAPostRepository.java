@@ -30,36 +30,36 @@ public class JPAPostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findByWriterUserId(Long writerUserId, int start) {
+    public List<Post> findByWriterUserId(Long writerUserId, int page) {
         return em.createQuery("select p from Post p where p.writerUserId=:userId", Post.class)
                 .setParameter("userId", writerUserId)
-                .setFirstResult(PAGE_POST_NUM * start)
+                .setFirstResult(PAGE_POST_NUM * (page-1))
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
 
     @Override
-    public List<Post> findByTripDays(Long tripDays, int start) {
+    public List<Post> findByTripDays(Long tripDays, int page) {
         return em.createQuery("select p from Post p where p.postTripDays=:trip_days", Post.class)
                 .setParameter("trip_days", tripDays)
-                .setFirstResult(PAGE_POST_NUM * start)
+                .setFirstResult(PAGE_POST_NUM * (page-1))
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
 
     @Override
-    public List<Post> getAllPosts(int start) {
+    public List<Post> getAllPosts(int page) {
         return em.createQuery("select p from Post p", Post.class)
-                .setFirstResult(PAGE_POST_NUM * start)
+                .setFirstResult(PAGE_POST_NUM * (page-1))
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
 
     @Override
-    public List<Post> findByPostDate(String postData, int start) {
+    public List<Post> findByPostDate(String postData, int page) {
         return em.createQuery("select p from Post p where p.postDate=:post_date", Post.class)
                 .setParameter("post_date", postData)
-                .setFirstResult(PAGE_POST_NUM * start)
+                .setFirstResult(PAGE_POST_NUM * (page-1))
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }
@@ -76,12 +76,12 @@ public class JPAPostRepository implements PostRepository {
     }
 
     @Override
-    public List<Post> findByQuery(String query, int start) {
-        String queryForJPQL = query; //"%" + query.replaceAll(" ", "%") + "%";
+    public List<Post> findByQuery(String query, int page) {
+        String queryForJPQL = query.replaceAll(" ", "%");
 
-        return em.createQuery("select p from Post p where p.postTitle like concat('%', :query, '%') or p.postContent like concat('%', :query, '%')", Post.class)
-                .setParameter("query", queryForJPQL)
-                .setFirstResult(PAGE_POST_NUM * start)
+        return em.createQuery("select p from Post p where p.postTitle like concat('%', :keyword, '%') or p.postContent like concat('%', :keyword, '%')", Post.class)
+                .setParameter("keyword", queryForJPQL)
+                .setFirstResult(PAGE_POST_NUM * (page-1))
                 .setMaxResults(PAGE_POST_NUM)
                 .getResultList();
     }

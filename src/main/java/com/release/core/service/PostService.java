@@ -214,7 +214,6 @@ public class PostService {
 
     public List<Post> searchWithQuery(String query, int page) {
         List<Post> searchedPostList = postRepository.findByQuery(query, page);
-        System.out.println("Length of searched post : " + searchedPostList.size() );
         ArrayList<Post> postList = new ArrayList<>();
         for(Post post : searchedPostList) {
             postList.add(applyTransientData(post));
