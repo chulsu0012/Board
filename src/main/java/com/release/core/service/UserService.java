@@ -75,6 +75,12 @@ public class UserService {
             // Optional에서 User 객체를 가져옴
             User user = userOptional.get();
 
+            if(user != null){
+                System.out.println("user is null");
+            }else{
+                System.out.println("user is not null");
+            }
+
             if (encoder.matches(req.getUserPassword(), user.getUserPassword())) {
                 // Spring Security 컨텍스트에 인증 정보를 저장
                 UserDetails userDetails = userDetailService.loadUserByUsername(req.getUserEmail());
@@ -87,6 +93,7 @@ public class UserService {
                 // 비밀번호가 일치하지 않으면 로그인 실패
                 throw new UsernameNotFoundException("비밀번호가 일치하지 않습니다.\nPassword doesn't match.");
             }
+
         } else {
             // 사용자 정보가 없을 경우 처리 (예: 사용자 없음 예외 처리)
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.\nUser is not found.");
