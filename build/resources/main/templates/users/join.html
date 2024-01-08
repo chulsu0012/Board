@@ -4,7 +4,7 @@
 <body>
 <div th:replace="fragments/header.html :: header ('user')"/>
 <div class="row">
-  <form class="offset-4 col-4 form-group user-form" th:method="post" th:action="@{/users/join}" th:object="${userJoinRequest}" align="left">
+  <form class="offset-4 col-4 form-group user-form" th:method="post" th:action="@{/join}" th:object="${userJoinRequest}" align="left">
     <div>
       <label th:for="userEmail">아이디 (아이디는 변경할 수 없습니다)</label><br/>
       <input type="text" th:field="*{userEmail}" placeholder="아이디를 입력해주세요.(최대 10자)"

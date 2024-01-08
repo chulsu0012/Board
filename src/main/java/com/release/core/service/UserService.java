@@ -1,5 +1,6 @@
 package com.release.core.service;
 
+import com.release.core.config.SecurityConfig;
 import com.release.core.config.auth.UserDetail;
 import com.release.core.domain.User;
 import com.release.core.dto.UserDto;
@@ -20,8 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +35,8 @@ public class UserService {
     private final UserDetailService userDetailService;
 
     private final BCryptPasswordEncoder encoder;
+
+    private static final Logger log = LogManager.getLogger(UserService.class);
 
     // 회원가입 유효
     public BindingResult joinValid(UserJoinRequest req, BindingResult bindingResult){
@@ -62,24 +68,19 @@ public class UserService {
     }
 
     public void join(UserJoinRequest req){
-        //userRepository.save(req.toEntity(encoder.encode(req.getUserPassword())));
-        userRepository.save(req.toEntity(req.getUserPassword()));
-
+        log.info("Joining :" + req.getUserName() + ", " + req.getUserEmail());
+        userRepository.save(req.toEntity(encoder.encode(req.getUserPassword())));
+        //userRepository.save(req.toEntity(req.getUserPassword()));
     }
 
     public User login(UserLoginRequest req){
 
         Optional<User> userOptional = userRepository.findByUserEmail(req.getUserEmail());
-
+        User user = userOptional.get();
+        log.info("Logining :" + user.getUserName() + ", " + req.getUserEmail());
         if (userOptional.isPresent()) {
             // Optional에서 User 객체를 가져옴
-            User user = userOptional.get();
 
-            if(user != null){
-                System.out.println("user is null");
-            }else{
-                System.out.println("user is not null");
-            }
 
             if (encoder.matches(req.getUserPassword(), user.getUserPassword())) {
                 // Spring Security 컨텍스트에 인증 정보를 저장
@@ -93,7 +94,6 @@ public class UserService {
                 // 비밀번호가 일치하지 않으면 로그인 실패
                 throw new UsernameNotFoundException("비밀번호가 일치하지 않습니다.\nPassword doesn't match.");
             }
-
         } else {
             // 사용자 정보가 없을 경우 처리 (예: 사용자 없음 예외 처리)
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.\nUser is not found.");

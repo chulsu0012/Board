@@ -4,6 +4,9 @@ import com.release.core.config.auth.MyLoginSuccessHandler;
 import com.release.core.config.auth.MyLogoutSuccessHandler;
 import com.release.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +31,8 @@ import static org.springframework.boot.autoconfigure.security.servlet.PathReques
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final UserRepository userRepository;
+    private static final Logger log = LogManager.getLogger(SecurityConfig.class);
+
     private static final String[] anonymousUserUrl = {"/users/login", "/users/join"};
 
     private static final String[] authenticatedUserUrl = {"/boards/**/**/edit"};
@@ -92,7 +97,7 @@ public class SecurityConfig {
                                 .loginPage("/users/login")
                                 .usernameParameter("userEmail")
                                 .passwordParameter("userPassword")
-                                .failureUrl("/users/login?fail")
+                                .failureUrl("/login?fail")
                                 .successHandler(new MyLoginSuccessHandler(userRepository))
                 )
                 .logout((logoutConfig) ->

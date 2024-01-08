@@ -17,17 +17,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/users")
+//@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/home")
+
+    private static final Logger log = LogManager.getLogger(UserController.class);
+
+    @GetMapping("/")
     public String home() {
         // 여기에서 home.html을 표시하도록 설정합니다.
-        return "users/home";
+        return "home";
     }
     // 회원가입
     @GetMapping("/join")
@@ -47,7 +52,7 @@ public class UserController {
 
         userService.join(req);
         model.addAttribute("message", "회원가입에 성공했습니다!\nJoin success\n로그인 후 사용 가능합니다!");
-        model.addAttribute("nextUrl", "/users/login");
+        model.addAttribute("nextUrl", "login");
         return "printMessage";
     }
 
@@ -70,10 +75,14 @@ public class UserController {
     public String login(@Valid @ModelAttribute UserLoginRequest req,
                         BindingResult bindingResult, HttpServletRequest httpServletRequest,
                         Model model) {
+
+        log.info("before login");
         model.addAttribute("loginType", "login");
         model.addAttribute("pageName", "로그인");
 
+
         User user = userService.login(req);
+        log.info("User: " + user.getUserEmail() + ", " + user.getUserName());   // 출력됨
 
         // 로그인 아이디나 비밀번호가 틀린 경우 global error return
         if (user == null) {
