@@ -1,34 +1,41 @@
 package com.release.core.controller;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.release.core.domain.Post;
-import com.release.core.dto.PostEditFormDTO;
-import com.release.core.dto.PostWriteFormDTO;
-import com.release.core.service.PostService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import org.apache.ibatis.annotations.Delete;
-import org.mybatis.logging.Logger;
-import org.mybatis.logging.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.release.core.domain.Post;
+import com.release.core.dto.PostEditFormDTO;
+import com.release.core.dto.PostWriteFormDTO;
+import com.release.core.service.BookmarkService;
+import com.release.core.service.PostService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class PostController {
     private final PostService postService;
+    private final BookmarkService bookmarkService;
+
     @Autowired
-    public PostController(PostService postService) {this.postService = postService;}
+    public PostController(PostService postService, BookmarkService bookmarkService) {
+        this.postService = postService;
+        this.bookmarkService = bookmarkService;
+    }
 
 
     @GetMapping("login-dev")
@@ -100,6 +107,8 @@ public class PostController {
         if(post.isPresent()) {
             if(Objects.equals(post.get().getWriterUserId(), userId)) {
                 postService.deletePost(postId);
+                bookmarkService.deleteAllRelatedOne(postId); // 해당 게시물의 북마크들 삭제
+                
                 return new ResponseEntity<>("Delete the post completely.", HttpStatus.OK);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access Denied");
