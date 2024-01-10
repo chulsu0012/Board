@@ -27,6 +27,14 @@ public class JPABookmarkRepository implements BookmarkRepository {
         em.remove(bookmark);
     }
 
+    public void deleteAllRelatedBookmark(Long postId) {
+        List<Bookmark> bookmarkList = em.createQuery("select b from Bookmark b where b.postId = :postId", Bookmark.class)
+            .setParameter("postId", postId)
+            .getResultList();
+        
+        em.remove(bookmarkList);
+    }
+
     @Override
     public Optional<Bookmark> findBookmarkByBookmarkId(Long bookmarkId) {
         Bookmark bookmark = em.find(Bookmark.class, bookmarkId);
@@ -42,10 +50,21 @@ public class JPABookmarkRepository implements BookmarkRepository {
     }
 
     @Override
-    public List<Bookmark> findAllBookmarks(Long userId) {
-        return em.createQuery("select b from Bookmark b where b.userId = :userId",
-            Bookmark.class).setParameter("userId", userId)
+    public List<Bookmark> findAllBookmarks(Long userId, Long pageNumber) {
+        Long pageSize = 3L;
+        Long firstResult = (pageNumber - 1L) * pageSize;
+
+        return em.createQuery("select b from Bookmark b where b.userId = :userId", Bookmark.class)
+            .setParameter("userId", userId)
+            .setFirstResult(firstResult.intValue())
+            .setMaxResults(pageSize.intValue())
             .getResultList();
     }
     
+    public int findBookmarksNumber(Long userId) {
+        return em.createQuery("select count(b) from Bookmark b where b.userId = :userId", Long.class)
+             .setParameter("userId", userId)
+             .getSingleResult()
+             .intValue();
+    }
 }

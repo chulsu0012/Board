@@ -32,14 +32,19 @@ public class BookmarkService {
             });
     }
 
-    //삭제
+    //단일 삭제
     public void deleteOne(Long bookmarkId) {
         bookmarkRepository.deleteBookmark(bookmarkId);
     }
+
+    //특정 게시물의 북마크 전체 삭제
+    public void deleteAllRelatedOne(Long postId) {
+        bookmarkRepository.deleteAllRelatedBookmark(postId);
+    }
     
     //전체 조회
-    public List<Bookmark> findAll(Long userId) {
-        return bookmarkRepository.findAllBookmarks(userId);
+    public List<Bookmark> findAll(Long userId, Long pageNumber) {
+        return bookmarkRepository.findAllBookmarks(userId, pageNumber);
     }
 
     //단일 조회
@@ -47,4 +52,8 @@ public class BookmarkService {
         return bookmarkRepository.findBookmarkByBookmarkId(bookmarkId);
     }
 
+    //전체 북마크 개수
+    public int findTotalPages(Long userId) {
+        return bookmarkRepository.findBookmarksNumber(userId);
+    }
 }
