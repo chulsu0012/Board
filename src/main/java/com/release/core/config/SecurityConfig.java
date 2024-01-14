@@ -33,7 +33,7 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private static final Logger log = LogManager.getLogger(SecurityConfig.class);
 
-    private static final String[] anonymousUserUrl = {"/users/login", "/users/join"};
+    private static final String[] anonymousUserUrl = {"/login", "/join"};
 
     private static final String[] authenticatedUserUrl = {"/boards/**/**/edit"};
 
@@ -57,13 +57,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .sessionManagement((sessionManagement) ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers(new OrRequestMatcher(
-                                        new AntPathRequestMatcher("/users/login"),
-                                        new AntPathRequestMatcher("/users/join")
+                                        new AntPathRequestMatcher("/login"),
+                                        new AntPathRequestMatcher("/join"),
+                                        new AntPathRequestMatcher("/user")
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 )).permitAll()
                                 .requestMatchers(new OrRequestMatcher(
@@ -94,7 +95,7 @@ public class SecurityConfig {
                  */
                 .formLogin((formLogin) ->
                         formLogin
-                                .loginPage("/users/login")
+                                .loginPage("/login")
                                 .usernameParameter("userEmail")
                                 .passwordParameter("userPassword")
                                 .failureUrl("/login?fail")

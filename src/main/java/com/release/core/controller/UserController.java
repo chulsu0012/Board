@@ -5,11 +5,16 @@ import com.release.core.dto.UserDto;
 import com.release.core.dto.UserJoinRequest;
 import com.release.core.dto.UserLoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import com.release.core.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +25,11 @@ import org.springframework.validation.BindingResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
-//@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
@@ -31,14 +38,16 @@ public class UserController {
 
     @GetMapping("/")
     public String home() {
+        log.info("This is home page.");
         // 여기에서 home.html을 표시하도록 설정합니다.
         return "home";
     }
     // 회원가입
     @GetMapping("/join")
     public String joinPage(Model model) {
+        log.info("This is join page.");
         model.addAttribute("userJoinRequest", new UserJoinRequest());
-        return "users/join";
+        return "join";
     }
 
     @PostMapping("/join")
@@ -47,7 +56,7 @@ public class UserController {
 
         // Validation
         if (userService.joinValid(req, bindingResult).hasErrors()) {
-            return "users/join";
+            return "join";
         }
 
         userService.join(req);
@@ -59,7 +68,7 @@ public class UserController {
     // 로그인
     @GetMapping("/login")
     public String loginPage(Model model, HttpServletRequest request) {
-
+        log.info("This is login page.");
         // 로그인 성공 시 이전 페이지로 redirect 되게 하기 위해 세션에 저장
         String uri = request.getHeader("Referer");
         if (uri != null && !uri.contains("/login") && !uri.contains("/join")) {
@@ -67,7 +76,7 @@ public class UserController {
         }
 
         model.addAttribute("userLoginRequest", new UserLoginRequest());
-        return "users/login";
+        return "login";
     }
 
 
@@ -81,8 +90,8 @@ public class UserController {
         model.addAttribute("pageName", "로그인");
 
 
-        User user = userService.login(req);
-        log.info("User: " + user.getUserEmail() + ", " + user.getUserName());   // 출력됨
+        User user = userService.login(req, httpServletRequest);
+        log.info("로그인 성공, User: " + user.getUserEmail() + ", " + user.getUserName());   // 출력됨
 
         // 로그인 아이디나 비밀번호가 틀린 경우 global error return
         if (user == null) {
@@ -107,14 +116,21 @@ public class UserController {
         HttpSession session = httpServletRequest.getSession(true);  // Session이 없으면 생성
         // 세션에 userId를 넣어줌
         session.setAttribute("userId", user.getUserId());
-        session.setMaxInactiveInterval(3600); // Session이 1시간동안 유지
+        session.setMaxInactiveInterval(1800); // Session이 1시간동안 유지
 
-        return "redirect:/home";
+        return "redirect:/";
     }
 
     // 로그아웃
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request, Model model) {
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return "redirect:/login?logout"; // 로그아웃 후 로그인 페이지로 리다이렉트
+
+        /*
         model.addAttribute("loginType", "login");
         model.addAttribute("pageName", "로그인");
 
@@ -123,7 +139,54 @@ public class UserController {
             session.invalidate();
         }
         return "redirect:/login";
+         */
     }
+
+    @GetMapping("/user")
+    public String getUserInfo(Model model) {
+        // 현재 로그인한 사용자의 Authentication 객체를 가져옵니다.
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 사용자 정보가 세션에 저장되어 있으므로, 사용자 이름을 가져올 수 있습니다.
+        String userName = authentication.getName();
+
+        log.info("Current login user: " + userName);
+
+        // 모델에 사용자 이름을 추가하여 템플릿에 전달합니다.
+        model.addAttribute("userName", userName);
+
+        // user.html 템플릿을 반환합니다.
+        return "user";
+    }
+
+    /*
+    public ResponseEntity<Map<String, String>> getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+
+        Map<String, String> responseData = new HashMap<>();
+        responseData.put("userName", userName);
+        log.info("Current login user: " + userName);
+
+        return ResponseEntity.ok(responseData);
+    }
+
+     */
+
+    /*
+    public String getUserInfo() {
+        // 현재 로그인한 사용자의 Authentication 객체를 가져옵니다.
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 사용자 정보가 세션에 저장되어 있으므로, 사용자 이름을 가져올 수 있습니다.
+        String userName = authentication.getName();
+
+        log.info("Current login user: " + userName);
+        // 사용자 이름을 반환합니다.
+        return "redirect:/";
+    }
+
+     */
 
     // 정보 수정
     @GetMapping("/edit")

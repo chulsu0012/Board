@@ -23,6 +23,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Optional;
 
@@ -73,7 +75,7 @@ public class UserService {
         //userRepository.save(req.toEntity(req.getUserPassword()));
     }
 
-    public User login(UserLoginRequest req){
+    public User login(UserLoginRequest req, HttpServletRequest httpServletRequest){
 
         Optional<User> userOptional = userRepository.findByUserEmail(req.getUserEmail());
         User user = userOptional.get();
@@ -88,6 +90,10 @@ public class UserService {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // 사용자 정보를 세션에 저장
+                HttpSession session = httpServletRequest.getSession(true);
+                session.setAttribute("user", user);
 
                 return user;
             } else {

@@ -30,9 +30,11 @@ public class MyLoginSuccessHandler implements AuthenticationSuccessHandler {
         PrintWriter pw = response.getWriter();
         String prevPage = (String) request.getSession().getAttribute("prevPage");
         if (prevPage != null) {
-            pw.println("<script>alert('" + loginUser.getUserName() + "님 반갑습니다!'); location.href='" + prevPage + "';</script>");
+            pw.println("<script>alert('hello! " + loginUser.getUserName() + "'); ");
+            // location.href='" + prevPage + "';</script>
         } else {
-            pw.println("<script>alert('" + loginUser.getUserName() + "님 반갑습니다!'); location.href='/';</script>");
+            pw.println("<script>alert('hello! " + loginUser.getUserName() + "'); ");
+            // location.href='/';</script>
         }
         pw.flush();
     }

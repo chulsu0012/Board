@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,7 +17,9 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-public class User {
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,5 +52,47 @@ public class User {
         this.userPassword = newUserPassword;
         this.userName = newUserName;
     }
+
+    /*
+    public String getUserName() {
+        return userName;
+    }
+    // UserDetails 인터페이스의 메서드 구현
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + userRole.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return userPassword;
+    }
+
+    @Override
+    public String getUsername() {
+        return userEmail;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // 계정 만료 여부 설정 (필요에 따라 수정)
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // 계정 잠금 여부 설정 (필요에 따라 수정)
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // 자격 증명 만료 여부 설정 (필요에 따라 수정)
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // 계정 활성 여부 설정 (필요에 따라 수정)
+    }
+
+     */
 }
 
