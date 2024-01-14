@@ -193,22 +193,25 @@ public class PostService {
         List<Long> connectionList = new ArrayList<>();
         ArrayList<Post> postList = new ArrayList<>();
 
-        if(tagIdList!=null && tripDays!=null) {
-            connectionList = postTagsConnectionRepository.searchWithTagAndDays(tagIdList, tripDays, page);
-        } else if(tagIdList!=null && tripDays==null) {
-            connectionList = postTagsConnectionRepository.searchWithTag(tagIdList, page);
-        } else if(tagIdList==null && tripDays!=null) {
-            connectionList = postTagsConnectionRepository.searchWithDays(tripDays, page);
+        if(tagIdList!=null || tripDays!=null) {
+            if(tagIdList!=null && tripDays!=null) {
+                connectionList = postTagsConnectionRepository.searchWithTagAndDays(tagIdList, tripDays, page);
+            } else if(tagIdList!=null && tripDays==null) {
+                connectionList = postTagsConnectionRepository.searchWithTag(tagIdList, page);
+            } else if(tagIdList==null && tripDays!=null) {
+                connectionList = postTagsConnectionRepository.searchWithDays(tripDays, page);
+            }
+
+            for(Long postId : connectionList) {
+                Optional<Post> postOptional = postRepository.findById(postId);
+                if(postOptional.isPresent()) {
+                    postList.add(applyTransientData(postOptional.get()));
+                }
+            }
         } else {
-            return postList;
+            postList = (ArrayList<Post>) postRepository.getAllPosts(page);
         }
 
-        for(Long postId : connectionList) {
-            Optional<Post> postOptional = postRepository.findById(postId);
-            if(postOptional.isPresent()) {
-                postList.add(applyTransientData(postOptional.get()));
-            }
-        }
         return postList;
     }
 
