@@ -115,8 +115,6 @@ public class PostService {
 
     public Optional<Post> findOne(Long postId) {return postRepository.findById(postId);}
 
-    public List<Post> findAll(int start) {return postRepository.getAllPosts(start);}
-
 
     public List<Post> findByTripDays(Long tripDays, int start) {
         return postRepository.findByTripDays(tripDays, start);
@@ -215,6 +213,22 @@ public class PostService {
         return postList;
     }
 
+    public int getAllPageSearch(List<Long> tagIdList, Long tripDays) {
+        int allPage = 0;
+
+        if(tagIdList!=null && tripDays!=null) {
+            allPage = postTagsConnectionRepository.getAllPageSearchWithTagAndDays(tagIdList, tripDays);
+        } else if(tagIdList!=null && tripDays==null) {
+            allPage = postTagsConnectionRepository.getAllPageSearchWithTag(tagIdList);
+        } else if(tagIdList==null && tripDays!=null) {
+            allPage = postTagsConnectionRepository.getAllPageSearchWithDays(tripDays);
+        } else {
+            allPage = postRepository.getAllPageGetAllPosts();
+        }
+
+        return allPage;
+    }
+
     public List<Post> searchWithQuery(String query, int page) {
         List<Post> searchedPostList = postRepository.findByQuery(query, page);
         ArrayList<Post> postList = new ArrayList<>();
@@ -222,6 +236,10 @@ public class PostService {
             postList.add(applyTransientData(post));
         }
         return postList;
+    }
+
+    public int getAllpageSearchWithQuery(String query) {
+        return postRepository.getAllPageFindByQuery(query);
     }
 
 

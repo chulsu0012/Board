@@ -10,19 +10,29 @@ public interface PostRepository {
 
     Post save(Post post);
 
+    boolean delete(Long postId);
 
     Optional<Post> findById(Long postId);
 
-    List<Post> findByWriterUserId(Long writerUserId, int start);
+    List<Post> findByWriterUserId(Long writerUserId, int page);
 
-    List<Post> findByTripDays(Long tripDays, int start);
+    int getAllPageFindByWriterUserId(Long writerUserId);
 
-    List<Post> getAllPosts(int start);
+    List<Post> findByTripDays(Long tripDays, int page);
 
-    List<Post> findByPostDate(String postData, int start);
+    int getAllPageFindByTripDays(Long tripDays);
 
-    List<Post> findByQuery(String query, int start);
+    List<Post> getAllPosts(int page);
+
+    int getAllPageGetAllPosts();
+
+    List<Post> findByPostDate(String postData, int page);
+
+    int getAllPageFindByPostDate(String postData);
+
+    List<Post> findByQuery(String query, int page);
+
+    int getAllPageFindByQuery(String query);
 
 
-    boolean delete(Long postId);
 }

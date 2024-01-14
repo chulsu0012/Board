@@ -39,4 +39,7 @@ public class Post {
     @Transient
     private String writerUserName;
 
+    @Transient
+    private int isBookmarked = 0;
+
 }
