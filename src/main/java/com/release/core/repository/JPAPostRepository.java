@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class JPAPostRepository implements PostRepository {
 
-    private static final int PAGE_POST_NUM = 30;
+    private static final int PAGE_POST_NUM = 3;
 
     private final EntityManager em;
 
@@ -55,7 +55,7 @@ public class JPAPostRepository implements PostRepository {
                 .setParameter("userId", writerUserId)
                 .getResultList().size();
 
-        return (int) Math.floor(size/PAGE_POST_NUM)+1;
+        return (int) Math.ceil(size/PAGE_POST_NUM);
     }
 
 
@@ -75,7 +75,7 @@ public class JPAPostRepository implements PostRepository {
                 .getResultList().size();
 
 
-        return size==0?0:(int) Math.floor(size/PAGE_POST_NUM)+1;
+        return (int) Math.ceil(size/PAGE_POST_NUM);
     }
 
 
@@ -92,7 +92,7 @@ public class JPAPostRepository implements PostRepository {
         double size = em.createQuery("select p from Post p", Post.class)
                 .getResultList().size();
 
-        return size==0?0:(int) Math.floor(size/PAGE_POST_NUM)+1;
+        return (int) Math.ceil(size/PAGE_POST_NUM);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class JPAPostRepository implements PostRepository {
                 .setParameter("post_date", postData)
                 .getResultList().size();
 
-        return size==0?0:(int) Math.floor(size/PAGE_POST_NUM)+1;
+        return (int) Math.ceil(size/PAGE_POST_NUM);
     }
 
     @Override
@@ -132,6 +132,6 @@ public class JPAPostRepository implements PostRepository {
                 .setParameter("keyword", queryForJPQL)
                 .getResultList().size();
 
-        return size==0?0:(int) Math.floor(size/PAGE_POST_NUM)+1;
+        return (int) Math.ceil(size/PAGE_POST_NUM);
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.release.core.dto.PostListResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,17 +51,17 @@ public class PostController {
 
     @GetMapping("post-search")
     @ResponseBody
-    public List<Post> postSearch(@RequestParam("page") int page,
-                                 @RequestParam(value = "tagId", required = false) List<Long> tagIdList,
-                                 @RequestParam(value = "tripDays", required = false) Long tripDays) {
-        return postService.search(tagIdList, page, tripDays);
+    public PostListResponse postSearch(@RequestParam("page") int page,
+                                       @RequestParam(value = "tagId", required = false) List<Long> tagIdList,
+                                       @RequestParam(value = "tripDays", required = false) Long tripDays) {
+        return new PostListResponse(postService.getAllPageSearch(tagIdList, tripDays), postService.search(tagIdList, page, tripDays));
     }
 
     @GetMapping("post-search-with-query")
     @ResponseBody
-    public List<Post> postSearchWithQuery(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+    public PostListResponse postSearchWithQuery(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                           @RequestParam("query") String query) {
-        return postService.searchWithQuery(query, page);
+        return new PostListResponse(postService.getAllpageSearchWithQuery(query), postService.searchWithQuery(query, page));
     }
 
     // 게시물 등록

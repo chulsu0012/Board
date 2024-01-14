@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class JPAPostTagsConnectionRepository implements PostTagsConnectionRepository{
     private final EntityManager em;
 
-    public static final int PAGE_POST_NUM = 30;
+    public static final int PAGE_POST_NUM = 3;
 
     public JPAPostTagsConnectionRepository(EntityManager em) {
         this.em = em;
@@ -95,7 +95,7 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
                 .setParameter("tripDays", tripDays)
                 .getResultList().size();
 
-        return size==0?0:(int) Math.floor(size/PAGE_POST_NUM)+1;
+        return (int) Math.ceil(size/PAGE_POST_NUM);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
                 .setParameter("tagIdList", tagIdList)
                 .getResultList().size();
 
-        return size==0?0:(int) Math.floor(size/PAGE_POST_NUM)+1;
+        return (int) Math.ceil(size/PAGE_POST_NUM);
     }
 
     @Override
@@ -145,6 +145,6 @@ public class JPAPostTagsConnectionRepository implements PostTagsConnectionReposi
                 .setParameter("tripDays", tripDays)
                 .getResultList().size();
 
-        return size==0?0:(int) Math.floor(size/PAGE_POST_NUM)+1;
+        return (int) Math.ceil(size/PAGE_POST_NUM);
     }
 }
