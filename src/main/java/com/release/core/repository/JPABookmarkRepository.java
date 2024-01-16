@@ -43,15 +43,14 @@ public class JPABookmarkRepository implements BookmarkRepository {
 
     @Override
     public Optional<Bookmark> findBookmarkByPostId(Long userId, Long postId) {
-        return em.createQuery("select b from Bookmark b where b.userId = :userId and b.postId = :postId",
-            Bookmark.class)
-            .setParameter("userId", userId).setParameter("postId", postId)
+        return em.createQuery("select b from Bookmark b where b.userId = :userId and b.postId = :postId", Bookmark.class)
+            .setParameter("userId", userId)
+            .setParameter("postId", postId)
             .getResultList().stream().findAny();
     }
 
     @Override
-    public List<Bookmark> findAllBookmarks(Long userId, Long pageNumber) {
-        Long pageSize = 3L;
+    public List<Bookmark> findAllBookmarks(Long userId, Long pageSize, Long pageNumber) {
         Long firstResult = (pageNumber - 1L) * pageSize;
 
         return em.createQuery("select b from Bookmark b where b.userId = :userId", Bookmark.class)
@@ -66,5 +65,16 @@ public class JPABookmarkRepository implements BookmarkRepository {
              .setParameter("userId", userId)
              .getSingleResult()
              .intValue();
+    }
+
+    @Override
+    public boolean findBookmarkAlready(Long userId, Long postId) {
+        Long count = em.createQuery("select count(b) from Bookmark b where b.userId = :userId and b.postId = :postId", Long.class)
+            .setParameter("userId", userId)
+            .setParameter("postId", postId)
+            .getSingleResult();
+
+        if (count > 0) return true;
+        else return false;
     }
 }

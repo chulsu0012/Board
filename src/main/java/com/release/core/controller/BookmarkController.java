@@ -1,7 +1,6 @@
 package com.release.core.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,7 +38,7 @@ public class BookmarkController {
   // 해당 포스트 내에서 실행
   @PostMapping("bookmark-save")
   @ResponseBody
-  public ResponseEntity<String> saveBookmark(Long userId, Long postId, BookmarkFormDTO form) {
+  public ResponseEntity<String> saveBookmark(@SessionAttribute(name="userId", required=false) Long userId, Long postId, BookmarkFormDTO form) {
     if(userId != null) {
       Optional<Post> post = postService.findOne(postId);
 
@@ -65,27 +64,19 @@ public class BookmarkController {
   // 마이페이지에 접속했을 때 실행
   @GetMapping("bookmark-load")
   @ResponseBody
-  public Pair<Integer, List<Post>> loadBookmark(Long userId, Long pageNumber) {
+  public Pair<Integer, List<Post>> loadBookmark(@SessionAttribute(name="userId", required=false) Long userId, Long pageNumber) {
     if (userId != null) {
-      int pageSize = 3;
+      Long pageSize = 3L;
       int totalPages = bookmarkService.findTotalPages(userId);
-      totalPages = (int) Math.ceil((double) totalPages / pageSize);
+      totalPages = (int) Math.ceil((double) totalPages / pageSize.intValue());
       
-      List<Bookmark> bookmarkList = bookmarkService.findAll(userId, pageNumber);
+      List<Bookmark> bookmarkList = bookmarkService.findAll(userId, pageSize, pageNumber);
       List<Post> postList = new ArrayList<>();
   
       for(Bookmark bookmarkIndex : bookmarkList) {
         Long postId = bookmarkIndex.getPostId();
         Optional<Post> post = postService.findOne(postId);
         postList.add(post.get());
-  
-        // if(post.isPresent()) {
-        //   postList.add(post.get());
-        // }
-        // else {
-        //   Long bookmarkId = bookmarkIndex.getBookmarkId();
-        //   bookmarkService.deleteOne(bookmarkId);
-        // }
       }
   
       return Pair.of(totalPages, postList);
@@ -100,7 +91,7 @@ public class BookmarkController {
   // 2. 마이페이지에 접속했을 때 실행
   @PostMapping("bookmark-delete")
   @ResponseBody
-  public ResponseEntity<String> deleteBookmark(Long userId, Long bookmarkId) {
+  public ResponseEntity<String> deleteBookmark(@SessionAttribute(name="userId", required=false) Long userId, Long bookmarkId) {
     if ( userId != null) {
       Optional<Bookmark> bookmark = bookmarkService.findOne(bookmarkId);
   
