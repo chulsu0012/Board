@@ -11,6 +11,7 @@ public interface BookmarkRepository {
     void deleteAllRelatedBookmark(Long postId);
     Optional<Bookmark> findBookmarkByBookmarkId(Long bookmarkId);
     Optional<Bookmark> findBookmarkByPostId(Long userId, Long postId);
-    List<Bookmark> findAllBookmarks(Long userId, Long pageNumber);
+    List<Bookmark> findAllBookmarks(Long userId, Long pageSize, Long pageNumber);
     int findBookmarksNumber(Long userId);
+    boolean findBookmarkAlready(Long userId, Long postId);
 }

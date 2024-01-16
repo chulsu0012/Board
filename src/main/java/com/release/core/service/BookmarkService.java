@@ -43,8 +43,8 @@ public class BookmarkService {
     }
     
     //전체 조회
-    public List<Bookmark> findAll(Long userId, Long pageNumber) {
-        return bookmarkRepository.findAllBookmarks(userId, pageNumber);
+    public List<Bookmark> findAll(Long userId, Long pageSize, Long pageNumber) {
+        return bookmarkRepository.findAllBookmarks(userId, pageSize, pageNumber);
     }
 
     //단일 조회
@@ -55,5 +55,10 @@ public class BookmarkService {
     //전체 북마크 개수
     public int findTotalPages(Long userId) {
         return bookmarkRepository.findBookmarksNumber(userId);
+    }
+
+    //해당 유저가 게시물을 이미 북마크했는지 검증
+    public boolean findOneAlready(Long userId, Long postId) {
+        return bookmarkRepository.findBookmarkAlready(userId, postId);
     }
 }
