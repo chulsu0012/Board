@@ -24,16 +24,17 @@ public class PostService {
     private final PostTagsConnectionRepository postTagsConnectionRepository;
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
-
     private final CategoryRepository categoryRepository;
+    private final BookmarkRepository bookmarkRepository;
 
 
-    public PostService(PostRepository postRepository, PostTagsConnectionRepository postTagsConnectionRepository, TagRepository tagRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, PostTagsConnectionRepository postTagsConnectionRepository, TagRepository tagRepository, CategoryRepository categoryRepository, UserRepository userRepository, BookmarkRepository bookmarkRepository) {
         this.postRepository = postRepository;
         this.postTagsConnectionRepository = postTagsConnectionRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.bookmarkRepository = bookmarkRepository;
     }
 
     public static <T> List<T> getPartOfList(List<T> list, int start, int end) {
@@ -55,18 +56,28 @@ public class PostService {
         }
     }
 
-    public Post applyTransientData(Post post) {
+    public Post applyTransientData(Post post) {return applyTransientData(post, null);}
+
+    public Post applyTransientData(Post post, Long userId) {
+        // 작성자 닉네임
         Optional<User> optionalWriterUser = userRepository.findByUserId(post.getWriterUserId());
         if(optionalWriterUser.isPresent()) {
             post.setWriterUserName(optionalWriterUser.get().getUserName());
         }
 
+        // 지역 태그 리스트
         List<PostTagsConnection> connectionList = postTagsConnectionRepository.findByPostId(post.getPostId());
         ArrayList<Long> tagIdList = new ArrayList<>();
         for(PostTagsConnection connection : connectionList) {
             tagIdList.add(connection.getTagId());
         }
         post.setTagIdList(tagIdList);
+
+        // 북마크 등록 여부
+        if(userId!=null) {
+            boolean isBookmark = bookmarkRepository.findBookmarkAlready(userId, post.getPostId());
+            post.setBookmarked(isBookmark);
+        }
 
         return post;
     }
@@ -187,7 +198,7 @@ public class PostService {
 
 
 
-    public List<Post> search(List<Long> tagIdList, int page, Long tripDays) {
+    public List<Post> search(List<Long> tagIdList, int page, Long tripDays, Long userId) {
         List<Long> connectionList = new ArrayList<>();
         ArrayList<Post> postList = new ArrayList<>();
 
@@ -203,7 +214,7 @@ public class PostService {
             for(Long postId : connectionList) {
                 Optional<Post> postOptional = postRepository.findById(postId);
                 if(postOptional.isPresent()) {
-                    postList.add(applyTransientData(postOptional.get()));
+                    postList.add(applyTransientData(postOptional.get(), userId));
                 }
             }
         } else {
@@ -229,11 +240,11 @@ public class PostService {
         return allPage;
     }
 
-    public List<Post> searchWithQuery(String query, int page) {
+    public List<Post> searchWithQuery(String query, int page, Long userId) {
         List<Post> searchedPostList = postRepository.findByQuery(query, page);
         ArrayList<Post> postList = new ArrayList<>();
         for(Post post : searchedPostList) {
-            postList.add(applyTransientData(post));
+            postList.add(applyTransientData(post, userId));
         }
         return postList;
     }

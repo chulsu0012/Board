@@ -47,7 +47,7 @@ public class AppConfig{
     }
 
     @Bean
-    public PostService postService() {return new PostService(postRepository(), postTagsConnectionRepository(), tagRepository(), categoryRepository(), userRepository);}
+    public PostService postService() {return new PostService(postRepository(), postTagsConnectionRepository(), tagRepository(), categoryRepository(), userRepository, bookmarkRepository());}
 
 
     // Bookmark

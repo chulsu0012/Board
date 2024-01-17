@@ -40,6 +40,6 @@ public class Post {
     private String writerUserName;
 
     @Transient
-    private int isBookmarked = 0;
+    private boolean isBookmarked = false;
 
 }

@@ -40,7 +40,7 @@ public class PostController {
 
 
     @GetMapping("login-dev")
-    public ResponseEntity<String> home(HttpServletRequest request,
+    public ResponseEntity<String> login_dev(HttpServletRequest request,
                                        @RequestParam("userId") Long userId) {
 
         HttpSession session = request.getSession();
@@ -49,19 +49,34 @@ public class PostController {
         return new ResponseEntity<>("Welcome user " + userId, HttpStatus.OK);
     }
 
+    @GetMapping("logout-dev")
+    public ResponseEntity<String> logout_dev(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Long oldUserId = (Long) session.getAttribute("userId");
+        session.removeAttribute("userId");
+
+        return new ResponseEntity<>("Goodbye user " + oldUserId, HttpStatus.OK);
+    }
+
     @GetMapping("post-search")
     @ResponseBody
-    public PostListResponse postSearch(@RequestParam("page") int page,
+    public PostListResponse postSearch(HttpServletRequest request,
+                                       @RequestParam("page") int page,
                                        @RequestParam(value = "tagId", required = false) List<Long> tagIdList,
                                        @RequestParam(value = "tripDays", required = false) Long tripDays) {
-        return new PostListResponse(postService.getAllPageSearch(tagIdList, tripDays), postService.search(tagIdList, page, tripDays));
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        return new PostListResponse(postService.getAllPageSearch(tagIdList, tripDays), postService.search(tagIdList, page, tripDays, userId));
     }
 
     @GetMapping("post-search-with-query")
     @ResponseBody
-    public PostListResponse postSearchWithQuery(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                                          @RequestParam("query") String query) {
-        return new PostListResponse(postService.getAllpageSearchWithQuery(query), postService.searchWithQuery(query, page));
+    public PostListResponse postSearchWithQuery(HttpServletRequest request,
+                                                @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                                @RequestParam("query") String query) {
+        HttpSession session = request.getSession();
+        Long userId = (Long) session.getAttribute("userId");
+        return new PostListResponse(postService.getAllpageSearchWithQuery(query), postService.searchWithQuery(query, page, userId));
     }
 
     // 게시물 등록
