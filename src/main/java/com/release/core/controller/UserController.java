@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -151,6 +150,24 @@ public class UserController {
         }
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("delete")
+    public ResponseEntity<String> deleteUser(@SessionAttribute(name = "userId") Long userId, @RequestParam String checkUserPassword) {
+        try {
+            // userId를 사용하여 회원 정보 삭제 로직 수행
+            if(userService.deleteUser(userId, checkUserPassword)){
+                return ResponseEntity.ok("회원 정보가 삭제되었습니다.");
+            }else{
+                return ResponseEntity.ok("회원 탈퇴에 실패했습니다.");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 정보 삭제에 실패하였습니다.");
+        }
+    }
+
+
+
     /*
     // 정보 수정
     @PutMapping("/edit")
@@ -171,27 +188,9 @@ public class UserController {
     }
     */
 
-    // 회원 탈퇴
-    @GetMapping("/delete")
-    public String userDeletePage(Authentication auth, Model model) {
-        User user = userService.myInfo(auth.getName());
-        model.addAttribute("userDto", UserDTO.of(user));
-        return "users/delete";
-    }
 
-    @PostMapping("/delete")
-    public String userDelete(@ModelAttribute UserDTO dto, Authentication auth, Model model) {
-        Boolean deleteSuccess = userService.delete(auth.getName(), dto.getNowUserPassword());
-        if (deleteSuccess) {
-            model.addAttribute("message", "탈퇴 되었습니다.");
-            model.addAttribute("nextUrl", "/users/logout");
-            return "printMessage";
-        } else {
-            model.addAttribute("message", "현재 비밀번호가 틀려 탈퇴에 실패하였습니다.");
-            model.addAttribute("nextUrl", "/users/delete");
-            return "printMessage";
-        }
-    }
+
+
 /*
     @GetMapping("/admin")
     public String adminPage(@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "") String keyword, Model model) {

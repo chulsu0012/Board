@@ -5,50 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06d9d7a5-34b3-4ca8-ac1a-b20cf6509ac0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserInfoResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserJoinResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserLoginResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/dependencies-accessors/dependencies-accessors.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.2.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.2.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/config/auth/MyLoginSuccessHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/config/auth/MyLoginSuccessHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/config/auth/MyLogoutSuccessHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/config/auth/MyLogoutSuccessHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/controller/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/controller/UserController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/domain/Post.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/domain/Post.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/domain/User$UserBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/domain/User$UserBuilder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/dto/PostEditFormDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/dto/PostEditFormDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/dto/PostWriteFormDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/dto/PostWriteFormDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/repository/JPAPostTagsConnectionRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/repository/JPAPostTagsConnectionRepository.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/release/core/service/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/release/core/service/UserService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/resources/main/templates/fragments/header.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/resources/main/templates/fragments/myPageHeader.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/resources/main/templates/printMessage.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLoginSuccessHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLogoutSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/auth/MyLogoutSuccessHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/dto/UserDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/fragments/header.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/fragments/myPageHeader.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/home.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/join.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/login.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/printMessage.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/user.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

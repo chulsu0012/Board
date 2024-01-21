@@ -157,14 +157,21 @@ public class UserService {
     }
 
     @Transactional
-    public Boolean delete(String userEmail, String nowUserPassword){
-        User loginUser = userRepository.findByUserEmail(userEmail).get();
-        if (encoder.matches(nowUserPassword, loginUser.getUserPassword())) {
-            userRepository.delete(loginUser);
-            return true;
-        }else {
-            return false;
+    public Boolean deleteUser(Long userId, String checkUserPassword) {
+        Optional<User> OptionalcurrentUser = userRepository.findByUserId(userId);
+
+        if (OptionalcurrentUser.isPresent()) {
+            User currentUser = OptionalcurrentUser.get();
+            log.info("userId: " + userId);
+            log.info("Current user: " + currentUser.getUserId());
+            if (encoder.matches(checkUserPassword, currentUser.getUserPassword())) {
+                userRepository.delete(currentUser);
+                return true;
+            } else {
+                return false;
+            }
         }
+        return false;
     }
 
     public Page<User> findAllByUserName(String keyword, PageRequest pageRequest){
