@@ -1,7 +1,10 @@
 package com.release.core.config;
 
-import java.util.List;
-
+import com.release.core.config.auth.MyLoginSuccessHandler;
+import com.release.core.config.auth.MyLogoutSuccessHandler;
+import com.release.core.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -18,11 +21,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.release.core.config.auth.MyLoginSuccessHandler;
-import com.release.core.config.auth.MyLogoutSuccessHandler;
-import com.release.core.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 @Configuration
 @EnableWebSecurity
@@ -66,12 +68,12 @@ public class SecurityConfig {
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 )).permitAll()
                                 .requestMatchers(new OrRequestMatcher(
-                                        new AntPathRequestMatcher("/boards/**/**/edit"),
-                                        new AntPathRequestMatcher("/boards/**/**/delete"),
-                                        new AntPathRequestMatcher("/likes/**"),
-                                        new AntPathRequestMatcher("/users/myPage/**"),
-                                        new AntPathRequestMatcher("/users/edit"),
-                                        new AntPathRequestMatcher("/users/delete")
+                                        //new AntPathRequestMatcher("/boards/**/**/edit"),
+                                        //new AntPathRequestMatcher("/boards/**/**/delete"),
+                                        //new AntPathRequestMatcher("/likes/**"),
+                                        new AntPathRequestMatcher("/user/myPage/**")
+                                        //new AntPathRequestMatcher("/user/edit"),
+                                        //new AntPathRequestMatcher("/user/delete")
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 )).authenticated()
                                 .requestMatchers(
@@ -93,14 +95,14 @@ public class SecurityConfig {
                  */
                 .formLogin((formLogin) ->
                         formLogin
-                                .loginPage("/login")
+                                .loginPage("/custom-login")
                                 .usernameParameter("userEmail")
                                 .passwordParameter("userPassword")
                                 .failureUrl("/login?fail")
                                 .successHandler(new MyLoginSuccessHandler(userRepository))
                 )
                 .logout((logoutConfig) ->
-                        logoutConfig.logoutUrl("/users/logout")
+                        logoutConfig.logoutUrl("/custom-logout")
                                 .invalidateHttpSession(true).deleteCookies("JSESSIONID")
                                 .logoutSuccessHandler(new MyLogoutSuccessHandler())
 
