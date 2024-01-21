@@ -128,8 +128,10 @@ public class UserController {
 
     // 유저 이름 변경 요청 처리
     @PutMapping("/editUserName")
-    public ResponseEntity<String> editUserName(@SessionAttribute(name="userId") Long userId, @RequestParam String newUserName) {
+    public ResponseEntity<String> editUserName(HttpServletRequest httpServletRequest, @RequestParam String newUserName) {
         try {
+            HttpSession session = httpServletRequest.getSession(false);
+            Long userId = (Long)session.getAttribute("userId");
             userService.editUName(userId, newUserName);
             return ResponseEntity.ok("유저 이름이 변경되었습니다.");
         } catch (Exception e) {
@@ -138,8 +140,10 @@ public class UserController {
     }
 
     @PutMapping("/editUserPassword")
-    public ResponseEntity<String> editUserPassword(@SessionAttribute(name="userId") Long userId, @RequestParam String newUserPassword, @RequestParam String newUserPasswordCheck) {
+    public ResponseEntity<String> editUserPassword(HttpServletRequest httpServletRequest, @RequestParam String newUserPassword, @RequestParam String newUserPasswordCheck) {
         try {
+            HttpSession session = httpServletRequest.getSession(false);
+            Long userId = (Long)session.getAttribute("userId");
             userService.editUPassword(userId, newUserPassword, newUserPasswordCheck);
             if (!newUserPassword.equals(newUserPasswordCheck)) {
                 return ResponseEntity.badRequest().body("새로운 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
