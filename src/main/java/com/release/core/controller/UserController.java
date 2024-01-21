@@ -156,13 +156,15 @@ public class UserController {
 
     // 회원 탈퇴
     @DeleteMapping("delete")
-    public ResponseEntity<String> deleteUser(@SessionAttribute(name = "userId") Long userId, @RequestParam String checkUserPassword) {
+    public ResponseEntity<String> deleteUser(HttpServletRequest httpServletRequest, @RequestParam String checkUserPassword) {
         try {
+            HttpSession session = httpServletRequest.getSession(false);
+            Long userId = (Long)session.getAttribute("userId");
             // userId를 사용하여 회원 정보 삭제 로직 수행
             if(userService.deleteUser(userId, checkUserPassword)){
                 return ResponseEntity.ok("회원 정보가 삭제되었습니다.");
             }else{
-                return ResponseEntity.ok("회원 탈퇴에 실패했습니다.");
+                return ResponseEntity.ok("확인 비밀번호가 올바르지 않습니다.");
             }
 
         } catch (Exception e) {
