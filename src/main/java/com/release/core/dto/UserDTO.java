@@ -6,15 +6,15 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserDto {
+public class UserDTO {
     private String userEmail;
     private String userName;
     private String nowUserPassword;
     private String newUserPassword;
     private String newUserPasswordCheck;
 
-    public static UserDto of(User user){
-        return UserDto.builder()
+    public static UserDTO of(User user){
+        return UserDTO.builder()
                 .userEmail(user.getUserEmail())
                 .userName(user.getUserName())
                 .build();

@@ -19,22 +19,21 @@ public class MyLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        // 세션 유지 시간 = 3600초
-        HttpSession session = request.getSession();
-        session.setMaxInactiveInterval(3600);
+
 
         User loginUser = userRepository.findByUserEmail(authentication.getName()).get();
 
         // 성공 시 메세지 출력 후 홈 화면으로 redirect
-        response.setContentType("text/html");
+        //response.setContentType("text/html");
         PrintWriter pw = response.getWriter();
+
         String prevPage = (String) request.getSession().getAttribute("prevPage");
         if (prevPage != null) {
             pw.println("<script>alert('hello! " + loginUser.getUserName() + "'); ");
-            // location.href='" + prevPage + "';</script>
+            pw.println("location.href='" + prevPage + "';</script>");
         } else {
             pw.println("<script>alert('hello! " + loginUser.getUserName() + "'); ");
-            // location.href='/';</script>
+            pw.println("location.href='/';</script>");
         }
         pw.flush();
     }

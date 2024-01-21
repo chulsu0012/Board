@@ -1,227 +1,186 @@
 package com.release.core.controller;
 
 import com.release.core.domain.User;
-import com.release.core.dto.UserDto;
-import com.release.core.dto.UserJoinRequest;
-import com.release.core.dto.UserLoginRequest;
+import com.release.core.dto.*;
+import com.release.core.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import com.release.core.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/user")
 public class UserController {
     private final UserService userService;
 
+    private final UserRepository userRepository;
 
     private static final Logger log = LogManager.getLogger(UserController.class);
 
-    @GetMapping("/")
-    public String home() {
-        log.info("This is home page.");
-        // 여기에서 home.html을 표시하도록 설정합니다.
-        return "home";
-    }
-    // 회원가입
-    @GetMapping("/join")
-    public String joinPage(Model model) {
-        log.info("This is join page.");
-        model.addAttribute("userJoinRequest", new UserJoinRequest());
-        return "join";
-    }
 
-    @PostMapping("/join")
-    public String join(@Valid @ModelAttribute UserJoinRequest req,
-                       BindingResult bindingResult, Model model) {
+    // 회원가입
+    @PostMapping("join")
+    public ResponseEntity<UserJoinResponse> joinUser(@Valid @RequestBody UserJoinRequest req,
+                                                     BindingResult bindingResult) {
 
         // Validation
         if (userService.joinValid(req, bindingResult).hasErrors()) {
-            return "join";
+            return ResponseEntity.badRequest().body(new UserJoinResponse("회원가입에 실패했습니다."));
+            //return ResponseEntity.badRequest().body("회원가입에 실패했습니다.");
+            //return new UserJoinResponse("회원가입에 실패했습니다.");
         }
 
         userService.join(req);
-        model.addAttribute("message", "회원가입에 성공했습니다!\nJoin success\n로그인 후 사용 가능합니다!");
-        model.addAttribute("nextUrl", "login");
-        return "printMessage";
+
+        UserJoinResponse response = new UserJoinResponse("회원가입에 성공했습니다!", req.getUserName(), req.getUserEmail());
+        return ResponseEntity.ok(response);
+        //return ResponseEntity.ok("회원가입에 성공했습니다!");
+        //return new UserJoinResponse("회원가입에 성공했습니다!", req.getUserName(), req.getUserEmail());
     }
 
     // 로그인
-    @GetMapping("/login")
-    public String loginPage(Model model, HttpServletRequest request) {
-        log.info("This is login page.");
-        // 로그인 성공 시 이전 페이지로 redirect 되게 하기 위해 세션에 저장
-        String uri = request.getHeader("Referer");
-        if (uri != null && !uri.contains("/login") && !uri.contains("/join")) {
-            request.getSession().setAttribute("prevPage", uri);
-        }
-
-        model.addAttribute("userLoginRequest", new UserLoginRequest());
-        return "login";
-    }
-
-
-    @PostMapping("/login")
-    public String login(@Valid @ModelAttribute UserLoginRequest req,
-                        BindingResult bindingResult, HttpServletRequest httpServletRequest,
-                        Model model) {
-
-        log.info("before login");
-        model.addAttribute("loginType", "login");
-        model.addAttribute("pageName", "로그인");
-
+    @PostMapping("login")
+    public ResponseEntity<UserLoginResponse> loginUser(@Valid @RequestBody UserLoginRequest req,
+                        BindingResult bindingResult, HttpServletRequest httpServletRequest) {
 
         User user = userService.login(req, httpServletRequest);
         log.info("로그인 성공, User: " + user.getUserEmail() + ", " + user.getUserName());   // 출력됨
 
+        if (bindingResult.hasErrors()) {
+            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+        }
+
         // 로그인 아이디나 비밀번호가 틀린 경우 global error return
         if (user == null) {
-            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
-        } else {
-            model.addAttribute("message", "로그인에 성공했습니다!\n login success msg");
-            model.addAttribute("nextUrl", "home");
-            return "printMessage";
+            return ResponseEntity.badRequest().body(new UserLoginResponse("로그인 아이디 또는 비밀번호가 틀렸습니다."));
+            //return ResponseEntity.badRequest().body("로그인 아이디 또는 비밀번호가 틀렸습니다.");
         }
 
-
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("message", "로그인 실패!\nlogin fail message");
-            model.addAttribute("nextUrl", "home");
-            return "printMessage";
-        }
-
-        // 로그인 성공 => 세션 생성
-
-        // 세션을 생성하기 전에 기존의 세션 파기
-        httpServletRequest.getSession().invalidate();
-        HttpSession session = httpServletRequest.getSession(true);  // Session이 없으면 생성
-        // 세션에 userId를 넣어줌
-        session.setAttribute("userId", user.getUserId());
-        session.setMaxInactiveInterval(1800); // Session이 1시간동안 유지
-
-        return "redirect:/";
+        UserLoginResponse response = new UserLoginResponse("로그인에 성공했습니다!", user.getUserId());
+        return ResponseEntity.ok(response);
     }
 
     // 로그아웃
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping("logout")
+    public ResponseEntity<String> logoutUser(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth != null) {
+            if(session != null){
+                // 세션을 무효화하고 세션 관련 데이터를 삭제
+                session.invalidate();
+            }
             new SecurityContextLogoutHandler().logout(request, response, auth);
+            return ResponseEntity.ok("로그아웃 되었습니다.");
         }
-        return "redirect:/login?logout"; // 로그아웃 후 로그인 페이지로 리다이렉트
 
-        /*
-        model.addAttribute("loginType", "login");
-        model.addAttribute("pageName", "로그인");
-
-        HttpSession session = request.getSession(false);  // Session이 없으면 null return
-        if(session != null) {
+        if (session != null) {
+            // 세션을 무효화하고 세션 관련 데이터를 삭제
             session.invalidate();
+            return ResponseEntity.ok("로그아웃 되었습니다.");
+        } else {
+            // 세션이 없는 경우, 이미 로그아웃 상태라고 간주
+            return ResponseEntity.ok("이미 로그아웃 되었습니다.");
         }
-        return "redirect:/login";
-         */
     }
 
-    @GetMapping("/user")
-    public String getUserInfo(Model model) {
-        // 현재 로그인한 사용자의 Authentication 객체를 가져옵니다.
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    // 내 정보
+    @GetMapping("info")
+    public ResponseEntity<UserInfoResponse> getUserInfo(HttpServletRequest httpServletRequest) {
+        HttpSession session = httpServletRequest.getSession(false);
 
-        // 사용자 정보가 세션에 저장되어 있으므로, 사용자 이름을 가져올 수 있습니다.
-        String userName = authentication.getName();
+        if (session != null) {
+            Long currentUserId = (Long)session.getAttribute("userId");
+            if(currentUserId != null) {
+                log.info("currentUserId = " + currentUserId);
+                Optional<User> optionalCurrentUser = userRepository.findByUserId(currentUserId);
+                if (optionalCurrentUser.isPresent()) {
+                    User currentUser = optionalCurrentUser.get();
+                    UserInfoResponse userInfoResponse = new UserInfoResponse(
+                            currentUser.getUserName(),
+                            currentUser.getUserEmail(),
+                            currentUser.getUserRegisterDate(),
+                            String.valueOf(currentUser.getUserRole())
+                    );
+                    return ResponseEntity.ok(userInfoResponse);
+                }
+            }
+        }
 
-        log.info("Current login user: " + userName);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
 
-        // 모델에 사용자 이름을 추가하여 템플릿에 전달합니다.
-        model.addAttribute("userName", userName);
+    // 유저 이름 변경 요청 처리
+    @PutMapping("/editUserName")
+    public ResponseEntity<String> editUserName(@SessionAttribute(name="userId") Long userId, @RequestParam String newUserName) {
+        try {
+            userService.editUName(userId, newUserName);
+            return ResponseEntity.ok("유저 이름이 변경되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("유저 이름 변경에 실패하였습니다.");
+        }
+    }
 
-        // user.html 템플릿을 반환합니다.
-        return "user";
+    @PutMapping("/editUserPassword")
+    public ResponseEntity<String> editUserPassword(@SessionAttribute(name="userId") Long userId, @RequestParam String newUserPassword, @RequestParam String newUserPasswordCheck) {
+        try {
+            userService.editUPassword(userId, newUserPassword, newUserPasswordCheck);
+            if (!newUserPassword.equals(newUserPasswordCheck)) {
+                return ResponseEntity.badRequest().body("새로운 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+            }
+            return ResponseEntity.ok("비밀번호가 변경되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("유저 이름 변경에 실패하였습니다.");
+        }
     }
 
     /*
-    public ResponseEntity<Map<String, String>> getUserInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
-
-        Map<String, String> responseData = new HashMap<>();
-        responseData.put("userName", userName);
-        log.info("Current login user: " + userName);
-
-        return ResponseEntity.ok(responseData);
-    }
-
-     */
-
-    /*
-    public String getUserInfo() {
-        // 현재 로그인한 사용자의 Authentication 객체를 가져옵니다.
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // 사용자 정보가 세션에 저장되어 있으므로, 사용자 이름을 가져올 수 있습니다.
-        String userName = authentication.getName();
-
-        log.info("Current login user: " + userName);
-        // 사용자 이름을 반환합니다.
-        return "redirect:/";
-    }
-
-     */
-
     // 정보 수정
-    @GetMapping("/edit")
-    public String userEditPage(Authentication auth, Model model) {
-        User user = userService.myInfo(auth.getName());
-        model.addAttribute("userDto", UserDto.of(user));
-        return "users/edit";
-    }
+    @PutMapping("/edit")
+    public ResponseEntity<String> userEdit(@SessionAttribute(name="userId") Long userId, BindingResult bindingResult,
+                           Authentication auth, UserDTO dto) {
 
-    @PostMapping("/edit")
-    public String userEdit(@Valid @ModelAttribute UserDto dto, BindingResult bindingResult,
-                           Authentication auth, Model model) {
+        Optional<User> userOptional = userRepository.findByUserId(userId);
+        if(userOptional.isPresent()){
+            userService.edit(userOptional.get(), dto)
+        }
 
-        // Validation
         if (userService.editValid(dto, bindingResult, auth.getName()).hasErrors()) {
             return "users/edit";
         }
 
         userService.edit(dto, auth.getName());
 
-        model.addAttribute("message", "정보가 수정되었습니다.");
-        model.addAttribute("nextUrl", "/users/myPage");
-        return "printMessage";
     }
+    */
 
     // 회원 탈퇴
     @GetMapping("/delete")
     public String userDeletePage(Authentication auth, Model model) {
         User user = userService.myInfo(auth.getName());
-        model.addAttribute("userDto", UserDto.of(user));
+        model.addAttribute("userDto", UserDTO.of(user));
         return "users/delete";
     }
 
     @PostMapping("/delete")
-    public String userDelete(@ModelAttribute UserDto dto, Authentication auth, Model model) {
+    public String userDelete(@ModelAttribute UserDTO dto, Authentication auth, Model model) {
         Boolean deleteSuccess = userService.delete(auth.getName(), dto.getNowUserPassword());
         if (deleteSuccess) {
             model.addAttribute("message", "탈퇴 되었습니다.");
@@ -233,7 +192,7 @@ public class UserController {
             return "printMessage";
         }
     }
-
+/*
     @GetMapping("/admin")
     public String adminPage(@RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "") String keyword, Model model) {
 
@@ -244,5 +203,6 @@ public class UserController {
         model.addAttribute("keyword", keyword);
         return "users/admin";
     }
+    */
 
 }

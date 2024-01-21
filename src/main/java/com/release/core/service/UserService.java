@@ -1,9 +1,7 @@
 package com.release.core.service;
 
-import com.release.core.config.SecurityConfig;
-import com.release.core.config.auth.UserDetail;
 import com.release.core.domain.User;
-import com.release.core.dto.UserDto;
+import com.release.core.dto.UserDTO;
 import com.release.core.dto.UserJoinRequest;
 import com.release.core.dto.UserLoginRequest;
 import com.release.core.repository.UserRepository;
@@ -25,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.Optional;
 
@@ -85,6 +84,7 @@ public class UserService {
 
 
             if (encoder.matches(req.getUserPassword(), user.getUserPassword())) {
+                httpServletRequest.getSession().invalidate();
                 // Spring Security 컨텍스트에 인증 정보를 저장
                 UserDetails userDetails = userDetailService.loadUserByUsername(req.getUserEmail());
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -93,8 +93,9 @@ public class UserService {
 
                 // 사용자 정보를 세션에 저장
                 HttpSession session = httpServletRequest.getSession(true);
-                session.setAttribute("user", user);
-
+                session.setAttribute("userId", user.getUserId());
+                //session.setAttribute("user", user);
+                session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
                 return user;
             } else {
                 // 비밀번호가 일치하지 않으면 로그인 실패
@@ -111,7 +112,7 @@ public class UserService {
     }
 
     // 정보수정 유효
-    public BindingResult editValid(UserDto dto, BindingResult bindingResult, String userEmail){
+    public BindingResult editValid(UserDTO dto, BindingResult bindingResult, String userEmail){
         // userPassword
         User loginUser = userRepository.findByUserEmail(userEmail).get();
 
@@ -133,15 +134,26 @@ public class UserService {
         return bindingResult;
     }
 
-    @Transactional
-    public void edit(UserDto dto, String userEmail){
-        User loginUser = userRepository.findByUserEmail(userEmail).get();
-
-        if(dto.getNewUserPassword().equals("")){
-            loginUser.edit(loginUser.getUserPassword(), dto.getUserName());
-        }else {
-            loginUser.edit(encoder.encode(dto.getNewUserPassword()), dto.getUserName());
+    public void editUName(Long userId, String newUserName) {
+        //User user = getCurrentUser(); // 현재 로그인된 사용자 가져오기
+        Optional<User> OptionalcurrentUser = userRepository.findByUserId(userId);
+        if(OptionalcurrentUser.isPresent()) {
+            User currentUser = OptionalcurrentUser.get();
+            currentUser.setUserName(newUserName);
+            userRepository.save(currentUser);
         }
+    }
+
+    @Transactional
+    public void editUPassword(Long userId, String newUserPassword, String newUserPasswordCheck){
+        Optional<User> OptionalcurrentUser = userRepository.findByUserId(userId);
+        if(OptionalcurrentUser.isPresent()) {
+            User currentUser = OptionalcurrentUser.get();
+            String encodedPassword = encoder.encode(newUserPassword);
+            currentUser.setUserPassword(encodedPassword);
+            userRepository.save(currentUser);
+        }
+
     }
 
     @Transactional

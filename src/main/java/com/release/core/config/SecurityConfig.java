@@ -68,12 +68,12 @@ public class SecurityConfig {
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 )).permitAll()
                                 .requestMatchers(new OrRequestMatcher(
-                                        new AntPathRequestMatcher("/boards/**/**/edit"),
-                                        new AntPathRequestMatcher("/boards/**/**/delete"),
-                                        new AntPathRequestMatcher("/likes/**"),
-                                        new AntPathRequestMatcher("/users/myPage/**"),
-                                        new AntPathRequestMatcher("/users/edit"),
-                                        new AntPathRequestMatcher("/users/delete")
+                                        //new AntPathRequestMatcher("/boards/**/**/edit"),
+                                        //new AntPathRequestMatcher("/boards/**/**/delete"),
+                                        //new AntPathRequestMatcher("/likes/**"),
+                                        new AntPathRequestMatcher("/user/myPage/**")
+                                        //new AntPathRequestMatcher("/user/edit"),
+                                        //new AntPathRequestMatcher("/user/delete")
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 )).authenticated()
                                 .requestMatchers(
@@ -95,14 +95,14 @@ public class SecurityConfig {
                  */
                 .formLogin((formLogin) ->
                         formLogin
-                                .loginPage("/login")
+                                .loginPage("/custom-login")
                                 .usernameParameter("userEmail")
                                 .passwordParameter("userPassword")
                                 .failureUrl("/login?fail")
                                 .successHandler(new MyLoginSuccessHandler(userRepository))
                 )
                 .logout((logoutConfig) ->
-                        logoutConfig.logoutUrl("/users/logout")
+                        logoutConfig.logoutUrl("/custom-logout")
                                 .invalidateHttpSession(true).deleteCookies("JSESSIONID")
                                 .logoutSuccessHandler(new MyLogoutSuccessHandler())
 
