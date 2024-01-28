@@ -43,7 +43,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         //Make the below setting as * to allow connection from any hos
         corsConfiguration.setAllowedOrigins(List.of("http://localhost:4200"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setMaxAge(3600L);
@@ -63,8 +63,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers(new OrRequestMatcher(
                                         new AntPathRequestMatcher("/login"),
-                                        new AntPathRequestMatcher("/join"),
-                                        new AntPathRequestMatcher("/user")
+                                        new AntPathRequestMatcher("/join")
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 )).permitAll()
                                 .requestMatchers(new OrRequestMatcher(

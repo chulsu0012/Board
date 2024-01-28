@@ -84,18 +84,6 @@ public class UserService {
 
 
             if (encoder.matches(req.getUserPassword(), user.getUserPassword())) {
-                httpServletRequest.getSession().invalidate();
-                // Spring Security 컨텍스트에 인증 정보를 저장
-                UserDetails userDetails = userDetailService.loadUserByUsername(req.getUserEmail());
-                Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                // 사용자 정보를 세션에 저장
-                HttpSession session = httpServletRequest.getSession(true);
-                session.setAttribute("userId", user.getUserId());
-                //session.setAttribute("user", user);
-                session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
                 return user;
             } else {
                 // 비밀번호가 일치하지 않으면 로그인 실패

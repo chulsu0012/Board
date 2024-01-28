@@ -2,6 +2,7 @@ package com.release.core.controller;
 
 import com.release.core.domain.User;
 import com.release.core.dto.*;
+
 import com.release.core.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,9 +10,12 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import com.release.core.service.UserService;
 import lombok.RequiredArgsConstructor;
+import com.release.core.config.auth.UserDetailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +32,7 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
+    private final UserDetailService userDetailService;
     private final UserRepository userRepository;
 
     private static final Logger log = LogManager.getLogger(UserController.class);
@@ -56,7 +61,7 @@ public class UserController {
     // 로그인
     @PostMapping("login")
     public ResponseEntity<UserLoginResponse> loginUser(@Valid @RequestBody UserLoginRequest req,
-                        BindingResult bindingResult, HttpServletRequest httpServletRequest) {
+                                                       BindingResult bindingResult, HttpServletRequest httpServletRequest) {
 
         User user = userService.login(req, httpServletRequest);
         log.info("로그인 성공, User: " + user.getUserEmail() + ", " + user.getUserName());   // 출력됨
@@ -70,6 +75,19 @@ public class UserController {
             return ResponseEntity.badRequest().body(new UserLoginResponse("로그인 아이디 또는 비밀번호가 틀렸습니다."));
             //return ResponseEntity.badRequest().body("로그인 아이디 또는 비밀번호가 틀렸습니다.");
         }
+
+        httpServletRequest.getSession().invalidate();
+        // Spring Security 컨텍스트에 인증 정보를 저장
+        UserDetails userDetails = userDetailService.loadUserByUsername(req.getUserEmail());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 사용자 정보를 세션에 저장
+        HttpSession session = httpServletRequest.getSession(true);
+        session.setAttribute("userId", user.getUserId());
+        //session.setAttribute("user", user);
+        session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
 
         UserLoginResponse response = new UserLoginResponse("로그인에 성공했습니다!", user.getUserId());
         return ResponseEntity.ok(response);
@@ -102,7 +120,7 @@ public class UserController {
 
     // 내 정보
     @GetMapping("info")
-    public ResponseEntity<UserInfoResponse> getUserInfo(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<UserInfoResponse> getUserInfo(@SessionAttribute(name="userId") Long sauserId, HttpServletRequest httpServletRequest) {
         HttpSession session = httpServletRequest.getSession(false);
 
         if (session != null) {
@@ -113,6 +131,7 @@ public class UserController {
                 if (optionalCurrentUser.isPresent()) {
                     User currentUser = optionalCurrentUser.get();
                     UserInfoResponse userInfoResponse = new UserInfoResponse(
+                            sauserId,
                             currentUser.getUserName(),
                             currentUser.getUserEmail(),
                             currentUser.getUserRegisterDate(),
@@ -128,10 +147,10 @@ public class UserController {
 
     // 유저 이름 변경 요청 처리
     @PutMapping("/editUserName")
-    public ResponseEntity<String> editUserName(HttpServletRequest httpServletRequest, @RequestParam String newUserName) {
+    public ResponseEntity<String> editUserName(@SessionAttribute(name="userId") Long userId, HttpServletRequest httpServletRequest, @RequestParam String newUserName) {
         try {
             HttpSession session = httpServletRequest.getSession(false);
-            Long userId = (Long)session.getAttribute("userId");
+            //Long userId = (Long)session.getAttribute("userId");
             userService.editUName(userId, newUserName);
             return ResponseEntity.ok("유저 이름이 변경되었습니다.");
         } catch (Exception e) {
