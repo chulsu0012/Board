@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -33,10 +35,6 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private static final Logger log = LogManager.getLogger(SecurityConfig.class);
 
-    private static final String[] anonymousUserUrl = {"/login", "/join"};
-
-    private static final String[] authenticatedUserUrl = {"/boards/**/**/edit"};
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -51,6 +49,15 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
+
+    /*
+@Bean
+public WebSecurityCustomizer confiure(){
+    return (web) -> web.ignoring()
+            .requestMatchers(toH2Console())
+            .requestMatchers("/static/**");
+}
+ */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
@@ -62,21 +69,25 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers(new OrRequestMatcher(
-                                        new AntPathRequestMatcher("/login"),
-                                        new AntPathRequestMatcher("/join")
+                                        new AntPathRequestMatcher("user/login"),
+                                        new AntPathRequestMatcher("user/join")
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 )).permitAll()
                                 .requestMatchers(new OrRequestMatcher(
-                                        //new AntPathRequestMatcher("/boards/**/**/edit"),
-                                        //new AntPathRequestMatcher("/boards/**/**/delete"),
-                                        //new AntPathRequestMatcher("/likes/**"),
-                                        new AntPathRequestMatcher("/user/myPage/**")
-                                        //new AntPathRequestMatcher("/user/edit"),
-                                        //new AntPathRequestMatcher("/user/delete")
+                                        new AntPathRequestMatcher("user/info"),
+                                        new AntPathRequestMatcher("user/editUserName"),
+                                        new AntPathRequestMatcher("user/editUserPassword"),
+                                        new AntPathRequestMatcher("user/delete"),
+                                        new AntPathRequestMatcher("post-write"),
+                                        new AntPathRequestMatcher("post-edit"),
+                                        new AntPathRequestMatcher("post-delete"),
+                                        new AntPathRequestMatcher("bookmark-save"),
+                                        new AntPathRequestMatcher("bookmark-load"),
+                                        new AntPathRequestMatcher("bookmark-delete")
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 )).authenticated()
                                 .requestMatchers(
-                                        new AntPathRequestMatcher("/users/admin/**")
+                                        new AntPathRequestMatcher("user/admin/**")
                                         // 여기에 추가적인 URL 패턴을 필요한 만큼 나열할 수 있습니다.
                                 ).hasAnyAuthority("ADMIN")
                                 // 개발 완료 시 비활성화
@@ -94,18 +105,36 @@ public class SecurityConfig {
                  */
                 .formLogin((formLogin) ->
                         formLogin
-                                .loginPage("/custom-login")
+                                //.loginPage("/custom-login")
                                 .usernameParameter("userEmail")
                                 .passwordParameter("userPassword")
                                 .failureUrl("/login?fail")
                                 .successHandler(new MyLoginSuccessHandler(userRepository))
                 )
                 .logout((logoutConfig) ->
-                        logoutConfig.logoutUrl("/custom-logout")
+                        logoutConfig
+                                //.logoutUrl("/custom-logout")
                                 .invalidateHttpSession(true).deleteCookies("JSESSIONID")
                                 .logoutSuccessHandler(new MyLogoutSuccessHandler())
 
                 );
         return httpSecurity.build();
     }
+    @Bean
+    AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+    /*
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder authenticationManagerBuilder,
+                                                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                                                       UserDetailService userDetailService) throws Exception {
+        authenticationManagerBuilder
+                .userDetailsService(userDetailService)
+                .passwordEncoder(bCryptPasswordEncoder);
+
+        return authenticationManagerBuilder.build();
+    }
+     */
 }

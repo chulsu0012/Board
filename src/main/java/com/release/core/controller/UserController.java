@@ -81,7 +81,9 @@ public class UserController {
         UserDetails userDetails = userDetailService.loadUserByUsername(req.getUserEmail());
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
+        //Authentication authentication1 = SecurityContextHolder.getContext().getAuthentication();
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
         // 사용자 정보를 세션에 저장
         HttpSession session = httpServletRequest.getSession(true);
@@ -89,8 +91,17 @@ public class UserController {
         //session.setAttribute("user", user);
         session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
 
-        UserLoginResponse response = new UserLoginResponse("로그인에 성공했습니다!", user.getUserId());
-        return ResponseEntity.ok(response);
+        // 인증 확인
+        if (authentication != null && authentication.isAuthenticated()) {
+            UserLoginResponse response = new UserLoginResponse("사용자가 인증되었습니다", user.getUserId());
+            return ResponseEntity.ok(response);
+        } else {
+            UserLoginResponse response = new UserLoginResponse("사용자가 인증되지않았습니다", user.getUserId());
+            return ResponseEntity.ok(response);
+        }
+
+        //UserLoginResponse response = new UserLoginResponse("로그인에 성공했습니다!", user.getUserId());
+        //return ResponseEntity.ok(response);
     }
 
     // 로그아웃
