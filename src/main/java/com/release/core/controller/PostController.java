@@ -52,7 +52,12 @@ public class PostController {
     @GetMapping("logout-dev")
     public ResponseEntity<String> logout_dev(HttpServletRequest request,
                                              @SessionAttribute(name="userId", required=false) Long oldUserId) {
-        return new ResponseEntity<>("Goodbye user " + oldUserId, HttpStatus.OK);
+        if(oldUserId!=null) {
+            HttpSession session = request.getSession();
+            session.removeAttribute("userId");
+            return new ResponseEntity<>("Goodbye user " + oldUserId, HttpStatus.OK);
+        }
+        else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다. 로그인 후 이용해주세요");}
     }
 
     @GetMapping("post-search")
@@ -79,34 +84,40 @@ public class PostController {
     @ResponseBody
     public Post postWrite(@SessionAttribute(name="userId", required=false) Long userId,
                           PostWriteFormDTO form) {
-        Post post = new Post();
-        post.setPostTitle(form.getPostTitle());
-        post.setPostDate(form.getPostDate());
-        post.setPostContent(form.getContent());
-        post.setPostTripDays(form.getTripDays());
-        post.setWriterUserId(userId);
-        post.setTagIdList(form.getTagIdList());
-        postService.write(post, form.getTagIdList());
-        post = postService.applyTransientData(post, userId);
-        return post;
+        System.out.println(userId);
+        if(userId!=null) {
+            Post post = new Post();
+            post.setPostTitle(form.getPostTitle());
+            post.setPostDate(form.getPostDate());
+            post.setPostContent(form.getContent());
+            post.setPostTripDays(form.getTripDays());
+            post.setWriterUserId(userId);
+            post.setTagIdList(form.getTagIdList());
+            postService.write(post, form.getTagIdList());
+            post = postService.applyTransientData(post, userId);
+            return post;
+        }
+        else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다. 로그인 후 이용해주세요");}
     }
 
     @PutMapping("post-edit")
     @ResponseBody
     public ResponseEntity<String> postEdit(@SessionAttribute(name="userId", required=false) Long userId,
                                            PostEditFormDTO form) {
-
-        Optional<Post> postOptional = postService.findOne(form.getPostId());
-        if(postOptional.isPresent()) {
-            if(Objects.equals(postOptional.get().getWriterUserId(), userId)) {
-                postService.editPost(postOptional.get(), form);
-                return new ResponseEntity<>("Edit the post completely.", HttpStatus.OK);
+        if(userId!=null) {
+            Optional<Post> postOptional = postService.findOne(form.getPostId());
+            if(postOptional.isPresent()) {
+                if(Objects.equals(postOptional.get().getWriterUserId(), userId)) {
+                    postService.editPost(postOptional.get(), form);
+                    return new ResponseEntity<>("Edit the post completely.", HttpStatus.OK);
+                } else {
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access Denied");
+                }
             } else {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access Denied");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
             }
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
         }
+        else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다. 로그인 후 이용해주세요");}
     }
 
 
@@ -115,19 +126,22 @@ public class PostController {
     @ResponseBody
     public ResponseEntity<String> postDelete(@SessionAttribute(name="userId", required=false) Long userId,
                                              @RequestParam("postId") Long postId) {
-        Optional<Post> post = postService.findOne(postId);
-        if(post.isPresent()) {
-            if(Objects.equals(post.get().getWriterUserId(), userId)) {
-                postService.deletePost(postId);
-                bookmarkService.deleteAllRelatedOne(postId); // 해당 게시물의 북마크들 삭제
-                
-                return new ResponseEntity<>("Delete the post completely.", HttpStatus.OK);
+        if(userId!=null) {
+            Optional<Post> post = postService.findOne(postId);
+            if (post.isPresent()) {
+                if (Objects.equals(post.get().getWriterUserId(), userId)) {
+                    postService.deletePost(postId);
+                    bookmarkService.deleteAllRelatedOne(postId); // 해당 게시물의 북마크들 삭제
+
+                    return new ResponseEntity<>("Delete the post completely.", HttpStatus.OK);
+                } else {
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access Denied");
+                }
             } else {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Access Denied");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
             }
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
         }
+        else {throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요한 기능입니다. 로그인 후 이용해주세요");}
     }
 
     // 게시물 조회
