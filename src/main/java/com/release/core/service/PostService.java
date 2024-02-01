@@ -100,7 +100,7 @@ public class PostService {
     }
 
     public boolean editPost(Post post, PostEditFormDTO form) {
-        post = applyTransientData(post);
+        post = applyTransientData(post, post.getWriterUserId());
         List<PostTagsConnection> oldPostTagsConnectionOptional = postTagsConnectionRepository.findByPostId(post.getPostId());
         for(PostTagsConnection connection : oldPostTagsConnectionOptional) {postTagsConnectionRepository.delete(connection.getConnectionId());}
 

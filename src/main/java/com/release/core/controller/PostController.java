@@ -50,39 +50,34 @@ public class PostController {
     }
 
     @GetMapping("logout-dev")
-    public ResponseEntity<String> logout_dev(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Long oldUserId = (Long) session.getAttribute("userId");
-        session.removeAttribute("userId");
-
+    public ResponseEntity<String> logout_dev(HttpServletRequest request,
+                                             @SessionAttribute(name="userId", required=false) Long oldUserId) {
         return new ResponseEntity<>("Goodbye user " + oldUserId, HttpStatus.OK);
     }
 
     @GetMapping("post-search")
     @ResponseBody
     public PostListResponse postSearch(HttpServletRequest request,
+                                       @SessionAttribute(name="userId", required=false) Long userId,
                                        @RequestParam("page") int page,
                                        @RequestParam(value = "tagId", required = false) List<Long> tagIdList,
                                        @RequestParam(value = "tripDays", required = false) Long tripDays) {
-        HttpSession session = request.getSession();
-        Long userId = (Long) session.getAttribute("userId");
         return new PostListResponse(postService.getAllPageSearch(tagIdList, tripDays), postService.search(tagIdList, page, tripDays, userId));
     }
 
     @GetMapping("post-search-with-query")
     @ResponseBody
     public PostListResponse postSearchWithQuery(HttpServletRequest request,
+                                                @SessionAttribute(name="userId", required=false) Long userId,
                                                 @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                                 @RequestParam("query") String query) {
-        HttpSession session = request.getSession();
-        Long userId = (Long) session.getAttribute("userId");
         return new PostListResponse(postService.getAllpageSearchWithQuery(query), postService.searchWithQuery(query, page, userId));
     }
 
     // 게시물 등록
     @PostMapping("post-write")
     @ResponseBody
-    public Post postWrite(@SessionAttribute(name="userId") Long userId,
+    public Post postWrite(@SessionAttribute(name="userId", required=false) Long userId,
                           PostWriteFormDTO form) {
         Post post = new Post();
         post.setPostTitle(form.getPostTitle());
@@ -92,12 +87,13 @@ public class PostController {
         post.setWriterUserId(userId);
         post.setTagIdList(form.getTagIdList());
         postService.write(post, form.getTagIdList());
+        post = postService.applyTransientData(post, userId);
         return post;
     }
 
     @PutMapping("post-edit")
     @ResponseBody
-    public ResponseEntity<String> postEdit(@SessionAttribute(name="userId") Long userId,
+    public ResponseEntity<String> postEdit(@SessionAttribute(name="userId", required=false) Long userId,
                                            PostEditFormDTO form) {
 
         Optional<Post> postOptional = postService.findOne(form.getPostId());
@@ -117,7 +113,7 @@ public class PostController {
     // 게시물 삭제
     @DeleteMapping("post-delete")
     @ResponseBody
-    public ResponseEntity<String> postDelete(@SessionAttribute(name="userId") Long userId,
+    public ResponseEntity<String> postDelete(@SessionAttribute(name="userId", required=false) Long userId,
                                              @RequestParam("postId") Long postId) {
         Optional<Post> post = postService.findOne(postId);
         if(post.isPresent()) {
@@ -137,10 +133,11 @@ public class PostController {
     // 게시물 조회
     @GetMapping("post-read")
     @ResponseBody
-    public Post postRead(@RequestParam("postId") Long postId) {
+    public Post postRead(@RequestParam("postId") Long postId,
+                         @SessionAttribute(name="userId", required=false) Long userId) {
         Optional<Post> optionalPost = postService.findOne(postId);
         if(optionalPost.isPresent()) {
-            Post post = postService.applyTransientData(optionalPost.get());
+            Post post = postService.applyTransientData(optionalPost.get(), userId);
             return post;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");

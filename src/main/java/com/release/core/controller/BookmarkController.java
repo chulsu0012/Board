@@ -76,7 +76,10 @@ public class BookmarkController {
       for(Bookmark bookmarkIndex : bookmarkList) {
         Long postId = bookmarkIndex.getPostId();
         Optional<Post> post = postService.findOne(postId);
-        postList.add(post.get());
+        if(post.isPresent()) {
+          Post p = postService.applyTransientData(post.get(), userId);
+          postList.add(p);
+        }
       }
   
       return Pair.of(totalPages, postList);
