@@ -29,8 +29,9 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2'
 	implementation 'org.springframework.session:spring-session-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc' // 순수 jdbc
+ 	runtimeOnly 'com.h2database:h2'
 	// MySQL 의존성 추가
-	implementation 'mysql:mysql-connector-java:8.0.19'
+	// implementation 'mysql:mysql-connector-java:8.0.19'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
