@@ -32,7 +32,9 @@ public class JPABookmarkRepository implements BookmarkRepository {
             .setParameter("postId", postId)
             .getResultList();
         
-        em.remove(bookmarkList);
+            for (Bookmark bookmark : bookmarkList) {
+                em.remove(bookmark);
+            }
     }
 
     @Override
