@@ -218,7 +218,11 @@ public class PostService {
                 }
             }
         } else {
-            postList = (ArrayList<Post>) postRepository.getAllPosts(page);
+            ArrayList<Post> postList_wa = (ArrayList<Post>) postRepository.getAllPosts(page);
+            for(Post post : postList_wa) {
+                postList.add(applyTransientData(post, userId));
+            }
+
         }
 
         return postList;
