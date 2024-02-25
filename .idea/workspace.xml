@@ -5,9 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06d9d7a5-34b3-4ca8-ac1a-b20cf6509ac0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/release/core/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/release/core/service/UserService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +30,12 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="springboard" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -59,7 +67,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "C:/Users/sbyy7/OneDrive/바탕 화면/2023_하반기/spring board project 01-28/Board/build.gradle",
+    "last_opened_file_path": "C:/Users/sbyy7/OneDrive/바탕 화면/2023_하반기/spring board project 02-05/Board/build.gradle",
     "two.files.diff.last.used.file": "C:/Users/sbyy7/OneDrive/바탕 화면/2023_하반기/spring board project 01-20/Board/src/main/resources/templates/fragments/myPageHeader.html"
   }
 }]]></component>
@@ -75,7 +83,7 @@
       <recent name="com.release.core.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.SpringBoardApplication (2)">
+  <component name="RunManager" selected="Application.SpringBoardApplication (3)">
     <configuration name="SpringBoardApplication (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.release.core.SpringBoardApplication" />
       <module name="com.release.springboard.main" />
@@ -102,9 +110,9 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SpringBoardApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="SpringBoardApplication (3)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.release.core.SpringBoardApplication" />
-      <module name="springboard.main" />
+      <module name="spring board project 02-25.Board.springboard.main" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.release.core.*" />
@@ -163,11 +171,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.SpringBoardApplication (3)" />
         <item itemvalue="Application.SpringBoardApplication (2)" />
         <item itemvalue="Application.SpringBoardApplication (1)" />
         <item itemvalue="Gradle.UserControllerTest" />
         <item itemvalue="Gradle.UserControllerTest.로그인_성공" />
-        <item itemvalue="Application.SpringBoardApplication" />
       </list>
     </recent_temporary>
   </component>

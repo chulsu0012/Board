@@ -77,11 +77,11 @@ public class UserService {
     public User login(UserLoginRequest req, HttpServletRequest httpServletRequest){
 
         Optional<User> userOptional = userRepository.findByUserEmail(req.getUserEmail());
-        User user = userOptional.get();
-        log.info("Logining :" + user.getUserName() + ", " + req.getUserEmail());
+
         if (userOptional.isPresent()) {
             // Optional에서 User 객체를 가져옴
-
+            User user = userOptional.get();
+            log.info("Logining :" + user.getUserName() + ", " + req.getUserEmail());
 
             if (encoder.matches(req.getUserPassword(), user.getUserPassword())) {
                 return user;

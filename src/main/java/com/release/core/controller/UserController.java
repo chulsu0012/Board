@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -44,10 +45,22 @@ public class UserController {
                                                      BindingResult bindingResult) {
 
         // Validation
+        // userEmail
         if (userService.joinValid(req, bindingResult).hasErrors()) {
-            return ResponseEntity.badRequest().body(new UserJoinResponse("회원가입에 실패했습니다."));
-            //return ResponseEntity.badRequest().body("회원가입에 실패했습니다.");
-            //return new UserJoinResponse("회원가입에 실패했습니다.");
+            if(req.getUserEmail().isEmpty()){
+                return ResponseEntity.badRequest().body(new UserJoinResponse("이메일이 비어있습니다. 이메일 주소를 입력해주세요."));
+            }
+            else if(userRepository.existsByUserEmail(req.getUserEmail())){
+                return ResponseEntity.badRequest().body(new UserJoinResponse("이미 사용 중인 이메일 주소입니다. 다른 이메일 주소를 입력해주세요."));
+            }
+        }
+
+        // userPassword
+        if(req.getUserPassword().isEmpty()){
+            return ResponseEntity.badRequest().body(new UserJoinResponse("비밀번호가 비어있습니다."));
+        }
+        if(!req.getUserPassword().equals(req.getUserPasswordCheck())){
+            return ResponseEntity.badRequest().body(new UserJoinResponse("비밀번호 확인이 일치하지 않습니다."));
         }
 
         userService.join(req);
@@ -62,46 +75,34 @@ public class UserController {
     @PostMapping("login")
     public ResponseEntity<UserLoginResponse> loginUser(@Valid @RequestBody UserLoginRequest req,
                                                        BindingResult bindingResult, HttpServletRequest httpServletRequest) {
+        try {
+            User user = userService.login(req, httpServletRequest);
+            log.info("로그인 성공, User: " + user.getUserEmail() + ", " + user.getUserName());
 
-        User user = userService.login(req, httpServletRequest);
-        log.info("로그인 성공, User: " + user.getUserEmail() + ", " + user.getUserName());   // 출력됨
+            // 성공적으로 로그인한 경우
+            httpServletRequest.getSession().invalidate();
+            // Spring Security 컨텍스트에 인증 정보를 저장
+            UserDetails userDetails = userDetailService.loadUserByUsername(req.getUserEmail());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // 사용자 정보를 세션에 저장
+            HttpSession session = httpServletRequest.getSession(true);
+            session.setAttribute("userId", user.getUserId());
+            session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
 
-        if (bindingResult.hasErrors()) {
-            bindingResult.reject("loginFail", "로그인 아이디 또는 비밀번호가 틀렸습니다.");
+            // 인증 확인
+            if (authentication != null && authentication.isAuthenticated()) {
+                UserLoginResponse response = new UserLoginResponse("사용자가 인증되었습니다", user.getUserId());
+                return ResponseEntity.ok(response);
+            } else {
+                UserLoginResponse response = new UserLoginResponse("사용자가 인증되지 않았습니다", user.getUserId());
+                return ResponseEntity.ok(response);
+            }
+        } catch (UsernameNotFoundException ex) {
+            // 로그인 실패 시 예외 처리
+            return ResponseEntity.badRequest().body(new UserLoginResponse(ex.getMessage()));
         }
-
-        // 로그인 아이디나 비밀번호가 틀린 경우 global error return
-        if (user == null) {
-            return ResponseEntity.badRequest().body(new UserLoginResponse("로그인 아이디 또는 비밀번호가 틀렸습니다."));
-            //return ResponseEntity.badRequest().body("로그인 아이디 또는 비밀번호가 틀렸습니다.");
-        }
-
-        httpServletRequest.getSession().invalidate();
-        // Spring Security 컨텍스트에 인증 정보를 저장
-        UserDetails userDetails = userDetailService.loadUserByUsername(req.getUserEmail());
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-        //Authentication authentication1 = SecurityContextHolder.getContext().getAuthentication();
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
-        // 사용자 정보를 세션에 저장
-        HttpSession session = httpServletRequest.getSession(true);
-        session.setAttribute("userId", user.getUserId());
-        //session.setAttribute("user", user);
-        session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
-
-        // 인증 확인
-        if (authentication != null && authentication.isAuthenticated()) {
-            UserLoginResponse response = new UserLoginResponse("사용자가 인증되었습니다", user.getUserId());
-            return ResponseEntity.ok(response);
-        } else {
-            UserLoginResponse response = new UserLoginResponse("사용자가 인증되지않았습니다", user.getUserId());
-            return ResponseEntity.ok(response);
-        }
-
-        //UserLoginResponse response = new UserLoginResponse("로그인에 성공했습니다!", user.getUserId());
-        //return ResponseEntity.ok(response);
     }
 
     // 로그아웃
